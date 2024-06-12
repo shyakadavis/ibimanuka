@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { sql, relations } from "drizzle-orm";
 import { pgEnum, pgTable, timestamp, varchar } from "drizzle-orm/pg-core";
 
 /**
@@ -49,3 +49,11 @@ export const categories = pgTable("categories", {
   created_at: timestamp("created_at").notNull().defaultNow(),
   updated_at: timestamp("updated_at").notNull().defaultNow(),
 });
+
+// ============================================================================
+// Relations
+// ============================================================================
+
+export const riddles_relations = relations(riddles, ({ many }) => ({
+  categories: many(categories),
+}));
