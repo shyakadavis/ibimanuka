@@ -14,5 +14,5 @@ jobs:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v1
 
-      # run any `bun` or `bunx` command
+      # run any `bun` or `bun x` command
       - run: bun check
