@@ -8,7 +8,7 @@ on:
 
 jobs:
   Check:
-    name: Run `bun check`
+    name: Format & Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
