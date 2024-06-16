@@ -1,22 +1,25 @@
 {
-	"scripts": {
-		"dev": "wrangler dev src/index.ts",
-		"worker:deploy": "wrangler deploy --minify src/index.ts",
-		"check": "bun x @biomejs/biome check --write .",
-		"db:generate": "drizzle-kit generate",
-		"db:migrate": "drizzle-kit migrate",
-		"db:studio": "drizzle-kit studio"
-	},
-	"dependencies": {
-		"@neondatabase/serverless": "^0.9.3",
-		"drizzle-orm": "^0.31.2",
-		"hono": "^4.4.5"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "1.8.1",
-		"@cloudflare/workers-types": "^4.20240529.0",
-		"dotenv": "^16.4.5",
-		"drizzle-kit": "^0.22.7",
-		"wrangler": "^3.57.2"
-	}
+  "scripts": {
+    "dev": "wrangler dev src/index.ts",
+    "worker:deploy": "wrangler deploy --minify src/index.ts",
+    "check": "bun x @biomejs/biome check --write .",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "@hono/zod-validator": "^0.2.2",
+    "@neondatabase/serverless": "^0.9.3",
+    "drizzle-orm": "^0.31.2",
+    "drizzle-zod": "^0.5.1",
+    "hono": "^4.4.5",
+    "nanoid": "^5.0.7"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.8.1",
+    "@cloudflare/workers-types": "^4.20240529.0",
+    "dotenv": "^16.4.5",
+    "drizzle-kit": "^0.22.7",
+    "wrangler": "^3.57.2"
+  }
 }

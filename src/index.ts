@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { cache } from "hono/cache";
 import { cors } from "hono/cors";
 import { prettyJSON } from "hono/pretty-json";
+import { categories, riddles } from "~/routes";
 
 const app = new Hono<{ Bindings: Bindings }>().basePath("/api/v1");
 
@@ -21,5 +22,9 @@ app.notFound((c) =>
 		status: 404,
 	}),
 );
+
+// Routes
+app.route("/riddles", riddles);
+app.route("/categories", categories);
 
 export default app;
