@@ -12,21 +12,44 @@ import { eq } from "drizzle-orm";
 
 const app = new Hono<{ Bindings: Bindings }>();
 
-app.get("/", async (c) => {
-  try {
-    const db = drizzle_client(c.env.DATABASE_URL);
-    const data = await db.query.categories.findMany();
-    return c.json({
-      success: true,
-      data,
-    });
-  } catch (error) {
-    return c.json({
-      success: false,
-      message: error,
-    });
-  }
-});
+app.get(
+  "/",
+  zValidator(
+    "query",
+    // TODO: It seems all query params are stringified, and we want numbers. The temporary fix is to use z.string().transform() to convert the string to a number, but I need to find a better way to handle this.
+    z.object({
+      limit: z
+        .string()
+        .transform((v) => parseInt(v))
+        .optional()
+        .default("10"),
+      offset: z
+        .string()
+        .transform((v) => parseInt(v))
+        .optional()
+        .default("0"),
+    }),
+  ),
+  async (c) => {
+    try {
+      const { limit, offset } = c.req.valid("query");
+      const db = drizzle_client(c.env.DATABASE_URL);
+      const data = await db.query.categories.findMany({
+        limit,
+        offset,
+      });
+      return c.json({
+        success: true,
+        data,
+      });
+    } catch (error) {
+      return c.json({
+        success: false,
+        message: error,
+      });
+    }
+  },
+);
 
 app.post("/", zValidator("form", insert_category_schema), async (c) => {
   try {
