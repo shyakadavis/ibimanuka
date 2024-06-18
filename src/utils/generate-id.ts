@@ -1,12 +1,12 @@
 import { customAlphabet } from "nanoid";
 
 export const nanoid = customAlphabet(
-  "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz",
+	"123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz",
 );
 
 const prefixes = {
-  riddle: "rdl",
-  category: "cat",
+	riddle: "rdl",
+	category: "cat",
 } as const;
 
 /**
@@ -15,5 +15,5 @@ const prefixes = {
  * @param prefix - The prefix to use for the id. Will be mapped to a short three-letter prefix.
  */
 export function generate_new_id(prefix: keyof typeof prefixes): string {
-  return [prefixes[prefix], nanoid(12)].join("_");
+	return [prefixes[prefix], nanoid(12)].join("_");
 }

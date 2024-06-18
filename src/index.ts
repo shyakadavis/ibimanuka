@@ -1,18 +1,35 @@
-import { Hono } from "hono";
-import { cache } from "hono/cache";
+import { OpenAPIHono } from "@hono/zod-openapi";
+import { apiReference } from "@scalar/hono-api-reference";
+// import { cache } from "hono/cache";
 import { cors } from "hono/cors";
 import { prettyJSON } from "hono/pretty-json";
-import { categories, riddles } from "~/routes";
+import { api_routes } from "./routes";
 
-const app = new Hono<{ Bindings: Bindings }>().basePath("/api/v1");
+const app = new OpenAPIHono<{ Bindings: Bindings }>();
 
-app.get(
-	"*",
-	cache({ cacheName: "ibimanuka-api", cacheControl: "max-age=7200" }),
-);
+// TODO: Add caching, but be mindful of what this did to you in dev mode. The cache was so aggressive that testing the API was a pain.
+// app.get(
+//   "*",
+//   cache({ cacheName: "ibimanuka-api", cacheControl: "max-age=7200" }),
+// );
+
+// The OpenAPI documentation will be available at /
+app.get("/", apiReference({ theme: "deepSpace", spec: { url: "/docs" } }));
+app.doc("/docs", {
+	openapi: "3.0.0",
+	info: {
+		version: "1.0.0",
+		title: "🌊 IBIMANUKA API 🌊",
+		description: "Your go-to API for anything RWANDA 🇷🇼",
+	},
+});
+// Cors
 app.use("/api/*", cors());
-app.get("/", (c) => c.text("🌊 IBIMANUKA API - V1"));
+// Pretty JSON
 app.use(prettyJSON());
+// API Routes
+app.route("/api/v1", api_routes);
+// Not Found
 app.notFound((c) =>
 	c.json({
 		message:
@@ -22,9 +39,5 @@ app.notFound((c) =>
 		status: 404,
 	}),
 );
-
-// Routes
-app.route("/riddles", riddles);
-app.route("/categories", categories);
 
 export default app;

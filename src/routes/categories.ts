@@ -1,125 +1,98 @@
-import { zValidator } from "@hono/zod-validator";
-import { z } from "zod";
-import { Hono } from "hono";
+import { createRoute, z } from "@hono/zod-openapi";
+import { OpenAPIHono } from "@hono/zod-openapi";
 import { drizzle_client } from "~/db";
-import {
-  categories,
-  insert_category_schema,
-  update_category_schema,
-} from "~/db/schema";
+import { categories, insert_category_schema } from "~/db/schema";
 import { generate_new_id } from "~/utils/generate-id";
-import { eq } from "drizzle-orm";
 
-const app = new Hono<{ Bindings: Bindings }>();
+export const categories_route = new OpenAPIHono<{ Bindings: Bindings }>();
 
-app.get(
-  "/",
-  zValidator(
-    "query",
-    // TODO: It seems all query params are stringified, and we want numbers. The temporary fix is to use z.string().transform() to convert the string to a number, but I need to find a better way to handle this.
-    z.object({
-      limit: z
-        .string()
-        .transform((v) => parseInt(v))
-        .optional()
-        .default("10"),
-      offset: z
-        .string()
-        .transform((v) => parseInt(v))
-        .optional()
-        .default("0"),
-    }),
-  ),
-  async (c) => {
-    try {
-      const { limit, offset } = c.req.valid("query");
-      const db = drizzle_client(c.env.DATABASE_URL);
-      const data = await db.query.categories.findMany({
-        limit,
-        offset,
-      });
-      return c.json({
-        success: true,
-        data,
-      });
-    } catch (error) {
-      return c.json({
-        success: false,
-        message: error,
-      });
-    }
-  },
-);
-
-app.post("/", zValidator("form", insert_category_schema), async (c) => {
-  try {
-    const validated_data = c.req.valid("form");
-    validated_data.id = generate_new_id("category");
-    const db = drizzle_client(c.env.DATABASE_URL);
-    const existing_category = await db.query.categories.findFirst({
-      where: eq(categories.name, validated_data.name),
-      columns: {
-        id: true,
-        name: true,
+// Route Validation Schemas
+const CategoriesParamsSchema = z.object({
+  limit: z
+    .string()
+    .transform(Number)
+    .optional()
+    .openapi({
+      param: {
+        name: "limit",
+        in: "query",
+        description: "The number of categories to return",
       },
-    });
-    if (existing_category) {
-      return c.json({
-        success: false,
-        message: `Category '${existing_category.name}' already exists`,
-      });
-    }
-    // TODO: Fix this
-    // @ts-expect-error I'm not dealing with this right now
-    const data = await db.insert(categories).values(validated_data);
-    if (data.rowCount === 0) {
-      return c.json({
-        success: false,
-        message: "Category not created",
-      });
-    }
-    return c.json({
-      success: true,
-      message: "Category created successfully",
-    });
-  } catch (error) {
-    return c.json({
-      success: false,
-      message: error,
-    });
-  }
+      example: "10",
+    }),
+  offset: z
+    .string()
+    .transform(Number)
+    .optional()
+    .openapi({
+      param: {
+        name: "offset",
+        in: "query",
+        description: "The number of categories to skip",
+      },
+      example: "0",
+    }),
 });
 
-app.patch(
-  "/:id",
-  zValidator("param", z.object({ id: z.string().min(16).max(16) })),
-  zValidator("form", update_category_schema),
-  async (c) => {
-    try {
-      const validated_id = c.req.valid("param").id;
-      const validated_data = c.req.valid("form");
-      const db = drizzle_client(c.env.DATABASE_URL);
-      const data = await db
-        .update(categories)
-        .set(validated_data)
-        .where(eq(categories.id, validated_id));
-      if (data.rowCount === 0) {
-        return c.json({
-          success: false,
-          message: "Category not found",
-        });
-      }
-      return c.json({
-        success: true,
-        message: "Category updated successfully",
-      });
-    } catch (error) {
-      return c.json({
-        success: false,
-        message: error,
-      });
-    }
+// Routes
+const get_all_categories = createRoute({
+  method: "get",
+  path: "/",
+  request: { query: CategoriesParamsSchema },
+  responses: {
+    200: {
+      content: {
+        "application/json": {
+          schema: insert_category_schema.array().openapi("Categories"),
+        },
+      },
+      description: "Returns a list of all categories",
+    },
   },
-);
+});
 
-export default app;
+const create_category = createRoute({
+  method: "post",
+  path: "/",
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: insert_category_schema
+            .omit({ id: true, created_at: true, updated_at: true })
+            .openapi("Categories"),
+        },
+      },
+    },
+  },
+  responses: {
+    201: {
+      content: {
+        "application/json": {
+          schema: z.object({}),
+        },
+      },
+      description: "Created product.",
+    },
+  },
+});
+
+// Route Handlers
+categories_route.openapi(get_all_categories, async (c) => {
+  const { limit, offset } = c.req.valid("query");
+  const db = drizzle_client(c.env.DATABASE_URL);
+  const data = await db.query.categories.findMany({ limit, offset });
+  return c.json(data, 200);
+});
+
+categories_route.openapi(create_category, async (c) => {
+  const { name, description } = c.req.valid("json");
+  const id = generate_new_id("category");
+  const db = drizzle_client(c.env.DATABASE_URL);
+  const data = await db.insert(categories).values({
+    id,
+    name,
+    description,
+  });
+  return c.json(data, 201);
+});

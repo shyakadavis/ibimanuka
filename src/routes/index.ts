@@ -1,4 +1,6 @@
-import categories from "./categories";
-import riddles from "./riddles";
+import { OpenAPIHono } from "@hono/zod-openapi";
+import { categories_route } from "./categories";
 
-export { categories, riddles };
+export const api_routes = new OpenAPIHono<{ Bindings: Bindings }>();
+
+api_routes.route("/categories", categories_route);
