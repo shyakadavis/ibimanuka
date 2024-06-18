@@ -13,6 +13,10 @@ const app = new OpenAPIHono<{ Bindings: Bindings }>();
 //   cache({ cacheName: "ibimanuka-api", cacheControl: "max-age=7200" }),
 // );
 
+// Cors
+app.use("/*", cors());
+// Pretty JSON
+app.use(prettyJSON());
 // The OpenAPI documentation will be available at /
 app.get("/", apiReference({ theme: "deepSpace", spec: { url: "/docs" } }));
 app.doc("/docs", {
@@ -23,20 +27,17 @@ app.doc("/docs", {
 		description: "Your go-to API for anything RWANDA 🇷🇼",
 	},
 });
-// Cors
-app.use("/*", cors());
-// Pretty JSON
-app.use(prettyJSON());
 // API Routes
 app.route("/api/v1", api_routes);
 // Not Found
 app.notFound((c) =>
 	c.json({
-		message:
-			"The route/endpoint you are looking for does not exist. It may have been removed or moved to a different location.",
-		type: "Not Found",
-		types: ["Not Found", "Error"],
-		status: 404,
+		success: false,
+		error: {
+			status: 404,
+			message:
+				"The route/endpoint you are looking for does not exist. It may have been removed or moved to a different location.",
+		},
 	}),
 );
 
