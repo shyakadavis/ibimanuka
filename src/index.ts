@@ -24,7 +24,7 @@ app.doc("/docs", {
 	},
 });
 // Cors
-app.use("/api/*", cors());
+app.use("/*", cors());
 // Pretty JSON
 app.use(prettyJSON());
 // API Routes

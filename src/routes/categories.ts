@@ -10,7 +10,7 @@ import {
 	success_without_data_schema,
 } from "~/utils/responses";
 
-export const categories_route = new OpenAPIHono<{ Bindings: Bindings }>();
+export const categories_routes = new OpenAPIHono<{ Bindings: Bindings }>();
 
 // Route Validation Schemas
 const categories_params_schema = z.object({
@@ -98,7 +98,7 @@ const create_category = createRoute({
 });
 
 // Route Handlers
-categories_route.openapi(get_all_categories, async (c) => {
+categories_routes.openapi(get_all_categories, async (c) => {
 	const { limit, offset } = c.req.valid("query");
 	const db = drizzle_client(c.env.DATABASE_URL);
 	const data = await db.query.categories.findMany({ limit, offset });
@@ -108,7 +108,7 @@ categories_route.openapi(get_all_categories, async (c) => {
 	);
 });
 
-categories_route.openapi(create_category, async (c) => {
+categories_routes.openapi(create_category, async (c) => {
 	const { name, description } = c.req.valid("json");
 	const id = generate_new_id("category");
 	const db = drizzle_client(c.env.DATABASE_URL);
