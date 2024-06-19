@@ -4,6 +4,7 @@ import { apiReference } from "@scalar/hono-api-reference";
 import { cors } from "hono/cors";
 import { prettyJSON } from "hono/pretty-json";
 import { api_routes } from "./routes";
+import { open_api_tags } from "./utils/open-api-tags";
 
 const app = new OpenAPIHono<{ Bindings: Bindings }>();
 
@@ -26,6 +27,7 @@ app.doc("/docs", {
 		title: "🌊 IBIMANUKA API 🌊",
 		description: "Your go-to API for anything RWANDA 🇷🇼",
 	},
+	tags: open_api_tags,
 });
 // API Routes
 app.route("/api/v1", api_routes);

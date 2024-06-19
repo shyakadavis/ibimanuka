@@ -22,6 +22,13 @@
 			"when": 1718529470667,
 			"tag": "0002_dapper_wildside",
 			"breakpoints": true
+		},
+		{
+			"idx": 3,
+			"version": "7",
+			"when": 1718801094186,
+			"tag": "0003_dashing_warbound",
+			"breakpoints": true
 		}
 	]
 }

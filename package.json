@@ -9,11 +9,14 @@
 	},
 	"dependencies": {
 		"@hono/zod-openapi": "^0.14.5",
+		"@lucia-auth/adapter-drizzle": "^1.0.7",
 		"@neondatabase/serverless": "^0.9.3",
 		"@scalar/hono-api-reference": "^0.5.72",
+		"arctic": "^1.9.1",
 		"drizzle-orm": "^0.31.2",
 		"drizzle-zod": "^0.5.1",
 		"hono": "^4.4.5",
+		"lucia": "^3.2.0",
 		"nanoid": "^5.0.7",
 		"zod": "^3.23.8"
 	},

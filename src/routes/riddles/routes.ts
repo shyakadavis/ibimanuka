@@ -15,7 +15,7 @@ import {
 export const get_all_riddles = createRoute({
 	method: "get",
 	path: "/",
-	tags: ["Riddles (Ibisakuzo)"],
+	tags: ["Riddles"],
 	summary: "Get all riddles",
 	description:
 		"Returns a list of all riddles. Can return a subset of riddles by using the `limit` and `offset` query parameters.",
@@ -36,7 +36,7 @@ export const get_all_riddles = createRoute({
 export const get_single_riddle = createRoute({
 	method: "get",
 	path: "/{id}",
-	tags: ["Riddles (Ibisakuzo)"],
+	tags: ["Riddles"],
 	summary: "Get a single riddle",
 	description: "Returns a single riddle by its `id`.",
 	request: {
@@ -58,7 +58,7 @@ export const get_single_riddle = createRoute({
 export const create_riddle = createRoute({
 	method: "post",
 	path: "/",
-	tags: ["Riddles (Ibisakuzo)"],
+	tags: ["Riddles"],
 	summary: "Create a new riddle",
 	description:
 		"Creates a new riddle. Requires a unique `name` and a `description`.",
@@ -92,7 +92,7 @@ export const create_riddle = createRoute({
 export const update_riddle = createRoute({
 	method: "put",
 	path: "/{id}",
-	tags: ["Riddles (Ibisakuzo)"],
+	tags: ["Riddles"],
 	summary: "Update a riddle",
 	description:
 		"Updates a riddle by its `id`. Requires a unique `name` and a `description`.",
@@ -126,7 +126,7 @@ export const update_riddle = createRoute({
 export const delete_riddle = createRoute({
 	method: "delete",
 	path: "/{id}",
-	tags: ["Riddles (Ibisakuzo)"],
+	tags: ["Riddles"],
 	summary: "Delete a riddle",
 	description: "Deletes a riddle by its `id`.",
 	request: {
