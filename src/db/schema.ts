@@ -1,5 +1,6 @@
 import { pgEnum, pgTable, timestamp, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod";
 
 /**
  * @name complexity_level_enum
@@ -61,30 +62,19 @@ export const categories = pgTable("categories", {
 // ============================================================================
 
 /**
- * @name insert_riddle_schema
- * @description Schema for inserting a riddle - can be used to validate API requests
+ * @name RiddleSchema
+ * @description Schema for riddles. Used for various validation and serialization tasks.
+ ⚠️ We are manually refining array fields because `drizzle-zod` does not parse arrays correctly. See: https://github.com/drizzle-team/drizzle-orm/issues/1609
+ * @example const RidleSchema.omit({id: true, created_at: true,updated_at: true}) can be used to create a schema for creating a new riddle.
  */
-export const insert_riddle_schema = createInsertSchema(riddles)
-	.omit({
-		created_at: true,
-		updated_at: true,
-	})
-	.partial({ id: true });
+export const RiddleSchema = createInsertSchema(riddles, {
+	categories: z.array(z.string().max(16)),
+	hints: z.array(z.string().max(256)),
+});
 
 /**
- * @name insert_category_schema
- * @description Schema for inserting a category - can be used to validate API requests
+ * @name CategorySchema
+ * @description Schema for categories. Used for various validation and serialization tasks.
+ * @example const CategorySchema.omit({id: true, created_at: true,updated_at: true}) can be used to create a schema for creating a new category.
  */
-export const insert_category_schema = createInsertSchema(categories);
-
-/**
- * @name update_category_schema
- * @description Schema for updating a category - can be used to validate API requests
- */
-export const update_category_schema = createInsertSchema(categories)
-	.omit({
-		id: true,
-		created_at: true,
-		updated_at: true,
-	})
-	.partial();
+export const CategorySchema = createInsertSchema(categories);
