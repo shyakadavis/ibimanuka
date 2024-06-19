@@ -1,41 +1,41 @@
 {
-  "version": "7",
-  "dialect": "postgresql",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "7",
-      "when": 1718370957245,
-      "tag": "0000_clean_firedrake",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1718529332076,
-      "tag": "0001_overrated_gambit",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1718529470667,
-      "tag": "0002_dapper_wildside",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1718801094186,
-      "tag": "0003_dashing_warbound",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1718816800020,
-      "tag": "0004_yielding_dazzler",
-      "breakpoints": true
-    }
-  ]
+	"version": "7",
+	"dialect": "postgresql",
+	"entries": [
+		{
+			"idx": 0,
+			"version": "7",
+			"when": 1718370957245,
+			"tag": "0000_clean_firedrake",
+			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "7",
+			"when": 1718529332076,
+			"tag": "0001_overrated_gambit",
+			"breakpoints": true
+		},
+		{
+			"idx": 2,
+			"version": "7",
+			"when": 1718529470667,
+			"tag": "0002_dapper_wildside",
+			"breakpoints": true
+		},
+		{
+			"idx": 3,
+			"version": "7",
+			"when": 1718801094186,
+			"tag": "0003_dashing_warbound",
+			"breakpoints": true
+		},
+		{
+			"idx": 4,
+			"version": "7",
+			"when": 1718816800020,
+			"tag": "0004_yielding_dazzler",
+			"breakpoints": true
+		}
+	]
 }

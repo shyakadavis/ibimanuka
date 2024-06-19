@@ -1,5 +1,6 @@
 import { createRoute } from "@hono/zod-openapi";
 import { RiddleSchema } from "~/db/schema";
+import { is_authenticated } from "~/middleware/is-authenticated";
 import {
 	error_responses,
 	success_with_data_schema,
@@ -15,6 +16,7 @@ import {
 export const get_all_riddles = createRoute({
 	method: "get",
 	path: "/",
+	guard: is_authenticated,
 	tags: ["Riddles"],
 	summary: "Get all riddles",
 	description:

@@ -1,24 +1,16 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { apiReference } from "@scalar/hono-api-reference";
-// import { cache } from "hono/cache";
 import { cors } from "hono/cors";
+import { csrf } from "hono/csrf";
 import { prettyJSON } from "hono/pretty-json";
 import { api_routes } from "./routes";
 import { open_api_tags } from "./utils/open-api-tags";
 
 const app = new OpenAPIHono<{ Bindings: Bindings }>();
 
-// TODO: Add caching, but be mindful of what this did to you in dev mode. The cache was so aggressive that testing the API was a pain.
-// app.get(
-//   "*",
-//   cache({ cacheName: "ibimanuka-api", cacheControl: "max-age=7200" }),
-// );
-
-// Cors
 app.use("/*", cors());
-// Pretty JSON
+app.use(csrf());
 app.use(prettyJSON());
-// The OpenAPI documentation will be available at /
 app.get("/", apiReference({ theme: "deepSpace", spec: { url: "/docs" } }));
 app.doc("/docs", {
 	openapi: "3.0.0",
@@ -29,9 +21,7 @@ app.doc("/docs", {
 	},
 	tags: open_api_tags,
 });
-// API Routes
 app.route("/api/v1", api_routes);
-// Not Found
 app.notFound((c) =>
 	c.json({
 		success: false,
