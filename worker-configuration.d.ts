@@ -1,10 +1,8 @@
-import type { Session, User } from "lucia";
-
 type Bindings = {
 	DATABASE_URL: string;
 };
 
 type Variables = {
-	user: User | null;
-	session: Session | null;
+	user: import("lucia").User | null;
+	session: import("lucia").Session | null;
 };

@@ -134,6 +134,14 @@ export const categories = pgTable(
 // ============================================================================
 
 /**
+ * @name User
+ * @description Type for users. We are refining the `email` field to be of a valid email type.
+ */
+export const User = createInsertSchema(users, {
+	email: z.string().email(),
+});
+
+/**
  * @name RiddleSchema
  * @description Schema for riddles. Used for various validation and serialization tasks.
  ⚠️ We are manually refining array fields because `drizzle-zod` does not parse arrays correctly. See: https://github.com/drizzle-team/drizzle-orm/issues/1609
