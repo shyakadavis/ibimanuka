@@ -11,7 +11,10 @@ import {
 	update_category,
 } from "./routes";
 
-export const categories_routes = new OpenAPIHono<{ Bindings: Bindings }>();
+export const categories_routes = new OpenAPIHono<{
+	Bindings: Bindings;
+	Variables: Variables;
+}>();
 
 categories_routes.openapi(get_all_categories, async (c) => {
 	const { limit, offset } = c.req.valid("query");

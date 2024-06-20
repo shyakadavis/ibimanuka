@@ -11,13 +11,16 @@ import {
 	update_riddle,
 } from "./routes";
 
-export const riddles_routes = new OpenAPIHono<{ Bindings: Bindings }>();
+export const riddles_routes = new OpenAPIHono<{
+	Bindings: Bindings;
+	Variables: Variables;
+}>();
 
-riddles_routes.openapi(get_all_riddles, async (c) => {
-	const { limit, offset } = c.req.valid("query");
-	const db = drizzle_client(c.env.DATABASE_URL);
+riddles_routes.openapi(get_all_riddles, async (ctx) => {
+	const { limit, offset } = ctx.req.valid("query");
+	const db = drizzle_client(ctx.env.DATABASE_URL);
 	const data = await db.query.riddles.findMany({ limit, offset });
-	return c.json(
+	return ctx.json(
 		{
 			success: true,
 			message: `Returned ${data.length} riddles`,
@@ -27,14 +30,14 @@ riddles_routes.openapi(get_all_riddles, async (c) => {
 	);
 });
 
-riddles_routes.openapi(get_single_riddle, async (c) => {
-	const { id } = c.req.valid("param");
-	const db = drizzle_client(c.env.DATABASE_URL);
+riddles_routes.openapi(get_single_riddle, async (ctx) => {
+	const { id } = ctx.req.valid("param");
+	const db = drizzle_client(ctx.env.DATABASE_URL);
 	const data = await db.query.riddles.findFirst({
 		where: eq(riddles.id, id),
 	});
 	if (!data) {
-		return c.json(
+		return ctx.json(
 			{
 				success: false,
 				error: {
@@ -45,7 +48,7 @@ riddles_routes.openapi(get_single_riddle, async (c) => {
 			404,
 		);
 	}
-	return c.json(
+	return ctx.json(
 		{
 			success: true,
 			message: `Returned riddle with id '${id}'`,
@@ -55,16 +58,16 @@ riddles_routes.openapi(get_single_riddle, async (c) => {
 	);
 });
 
-riddles_routes.openapi(create_riddle, async (c) => {
+riddles_routes.openapi(create_riddle, async (ctx) => {
 	const { question, answer, categories, complexity_level, hints } =
-		c.req.valid("json");
-	const db = drizzle_client(c.env.DATABASE_URL);
+		ctx.req.valid("json");
+	const db = drizzle_client(ctx.env.DATABASE_URL);
 	const existing_riddle = await db.query.riddles.findFirst({
 		where: eq(riddles.question, question),
 		columns: { question: true, answer: true },
 	});
 	if (existing_riddle) {
-		return c.json(
+		return ctx.json(
 			{
 				success: false,
 				error: {
@@ -84,7 +87,7 @@ riddles_routes.openapi(create_riddle, async (c) => {
 		hints,
 	});
 	if (data.rowCount === 0) {
-		return c.json(
+		return ctx.json(
 			{
 				success: false,
 				error: {
@@ -95,7 +98,7 @@ riddles_routes.openapi(create_riddle, async (c) => {
 			500,
 		);
 	}
-	return c.json(
+	return ctx.json(
 		{
 			success: true,
 			message: "Riddle created successfully",
@@ -104,17 +107,17 @@ riddles_routes.openapi(create_riddle, async (c) => {
 	);
 });
 
-riddles_routes.openapi(update_riddle, async (c) => {
-	const { id } = c.req.valid("param");
+riddles_routes.openapi(update_riddle, async (ctx) => {
+	const { id } = ctx.req.valid("param");
 	const { question, answer, categories, complexity_level, hints } =
-		c.req.valid("json");
-	const db = drizzle_client(c.env.DATABASE_URL);
+		ctx.req.valid("json");
+	const db = drizzle_client(ctx.env.DATABASE_URL);
 	const existing_riddle = await db.query.riddles.findFirst({
 		where: eq(riddles.id, id),
 		columns: { question: true },
 	});
 	if (!existing_riddle) {
-		return c.json(
+		return ctx.json(
 			{
 				success: false,
 				error: {
@@ -131,7 +134,7 @@ riddles_routes.openapi(update_riddle, async (c) => {
 			columns: { question: true },
 		});
 		if (duplicate_riddle) {
-			return c.json(
+			return ctx.json(
 				{
 					success: false,
 					error: {
@@ -154,7 +157,7 @@ riddles_routes.openapi(update_riddle, async (c) => {
 		})
 		.where(eq(riddles.id, id));
 	if (data.rowCount === 0) {
-		return c.json(
+		return ctx.json(
 			{
 				success: false,
 				error: {
@@ -165,7 +168,7 @@ riddles_routes.openapi(update_riddle, async (c) => {
 			500,
 		);
 	}
-	return c.json(
+	return ctx.json(
 		{
 			success: true,
 			message: "Riddle updated successfully",
@@ -174,15 +177,15 @@ riddles_routes.openapi(update_riddle, async (c) => {
 	);
 });
 
-riddles_routes.openapi(delete_riddle, async (c) => {
-	const { id } = c.req.valid("param");
-	const db = drizzle_client(c.env.DATABASE_URL);
+riddles_routes.openapi(delete_riddle, async (ctx) => {
+	const { id } = ctx.req.valid("param");
+	const db = drizzle_client(ctx.env.DATABASE_URL);
 	const existing_riddle = await db.query.riddles.findFirst({
 		where: eq(riddles.id, id),
 		columns: { id: true },
 	});
 	if (!existing_riddle) {
-		return c.json(
+		return ctx.json(
 			{
 				success: false,
 				error: {
@@ -195,7 +198,7 @@ riddles_routes.openapi(delete_riddle, async (c) => {
 	}
 	const data = await db.delete(riddles).where(eq(riddles.id, id));
 	if (data.rowCount === 0) {
-		return c.json(
+		return ctx.json(
 			{
 				success: false,
 				error: {
@@ -206,7 +209,7 @@ riddles_routes.openapi(delete_riddle, async (c) => {
 			500,
 		);
 	}
-	return c.json(
+	return ctx.json(
 		{
 			success: true,
 			message: "Riddle deleted successfully",

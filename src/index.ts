@@ -5,8 +5,9 @@ import { csrf } from "hono/csrf";
 import { prettyJSON } from "hono/pretty-json";
 import { api_routes } from "./routes";
 import { open_api_tags } from "./utils/open-api-tags";
+import { new_http_error } from "./utils/responses";
 
-const app = new OpenAPIHono<{ Bindings: Bindings }>();
+const app = new OpenAPIHono<{ Bindings: Bindings; Variables: Variables }>();
 
 app.use("/*", cors());
 app.use(csrf());
@@ -22,15 +23,13 @@ app.doc("/docs", {
 	tags: open_api_tags,
 });
 app.route("/api/v1", api_routes);
-app.notFound((c) =>
-	c.json({
-		success: false,
-		error: {
-			status: 404,
-			message:
-				"The route/endpoint you are looking for does not exist. It may have been removed or moved to a different location.",
-		},
-	}),
-);
+app.notFound((ctx) => {
+	return new_http_error({
+		ctx,
+		status: 404,
+		message:
+			"The route/endpoint you are looking for does not exist. It may have been removed or moved to a different location.",
+	});
+});
 
 export default app;
