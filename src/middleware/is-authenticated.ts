@@ -12,17 +12,19 @@ export const is_authenticated: MiddlewareHandler = async (c, next) => {
 		return next();
 	}
 	const { session, user } = await lucia.validateSession(session_id);
-	if (session && session.fresh) {
-		// use `header()` instead of `setCookie()` to avoid TS errors
-		c.header("Set-Cookie", lucia.createSessionCookie(session.id).serialize(), {
-			append: true,
-		});
-	}
 	if (!session) {
 		c.header("Set-Cookie", lucia.createBlankSessionCookie().serialize(), {
 			append: true,
 		});
 	}
+
+	if (session?.fresh) {
+		// use `header()` instead of `setCookie()` to avoid TS errors
+		c.header("Set-Cookie", lucia.createSessionCookie(session.id).serialize(), {
+			append: true,
+		});
+	}
+
 	c.set("user", user);
 	c.set("session", session);
 	await next();
