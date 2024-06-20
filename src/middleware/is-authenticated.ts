@@ -20,9 +20,6 @@ export const is_authenticated: MiddlewareHandler = async (ctx, next) => {
 
 	const { session, user } = await lucia.validateSession(session_id);
 
-	console.log({ session });
-	console.log({ user });
-
 	if (!session) {
 		ctx.header("Set-Cookie", lucia.createBlankSessionCookie().serialize(), {
 			append: true,
