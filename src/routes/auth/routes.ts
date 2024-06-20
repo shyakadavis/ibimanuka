@@ -5,7 +5,7 @@ import {
 	success_without_data_schema,
 } from "~/utils/responses";
 
-export const sign_up = createRoute({
+export const sign_up_with_email_and_password = createRoute({
 	method: "post",
 	path: "/sign-up",
 	tags: ["Auth"],
@@ -31,6 +31,32 @@ export const sign_up = createRoute({
 	responses: {
 		201: {
 			description: "User signed up",
+			content: { "application/json": { schema: success_without_data_schema } },
+		},
+		...error_responses,
+	},
+});
+
+export const log_in_with_email_and_password = createRoute({
+	method: "post",
+	path: "/log-in",
+	tags: ["Auth"],
+	summary: "Log in with email and password",
+	description: "Log in with email and password.",
+	request: {
+		body: {
+			content: {
+				"application/json": {
+					schema: User.pick({
+						email: true,
+					}).extend({ password: z.string().min(8) }),
+				},
+			},
+		},
+	},
+	responses: {
+		200: {
+			description: "User logged in",
 			content: { "application/json": { schema: success_without_data_schema } },
 		},
 		...error_responses,

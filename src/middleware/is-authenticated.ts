@@ -6,18 +6,23 @@ import { new_http_error } from "~/utils/responses";
 export const is_authenticated: MiddlewareHandler = async (ctx, next) => {
 	const lucia = create_lucia_instance(ctx.env.DATABASE_URL);
 	const session_id = getCookie(ctx, lucia.sessionCookieName) ?? null;
-	// they are not logged in
+
 	if (!session_id) {
 		ctx.set("user", null);
 		ctx.set("session", null);
+
 		return new_http_error({
 			ctx,
 			status: 401,
 			message: "Unauthorized: authentication required.",
 		});
 	}
-	// they're cool
+
 	const { session, user } = await lucia.validateSession(session_id);
+
+	console.log({ session });
+	console.log({ user });
+
 	if (!session) {
 		ctx.header("Set-Cookie", lucia.createBlankSessionCookie().serialize(), {
 			append: true,
@@ -29,13 +34,12 @@ export const is_authenticated: MiddlewareHandler = async (ctx, next) => {
 		ctx.header(
 			"Set-Cookie",
 			lucia.createSessionCookie(session.id).serialize(),
-			{
-				append: true,
-			},
+			{ append: true },
 		);
 	}
 
 	ctx.set("user", user);
 	ctx.set("session", session);
+
 	return next();
 };
