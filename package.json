@@ -5,7 +5,8 @@
 		"check": "bun x @biomejs/biome check --write .",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
-		"db:studio": "drizzle-kit studio"
+		"db:studio": "drizzle-kit studio",
+		"prepare": "husky"
 	},
 	"dependencies": {
 		"@hono/zod-openapi": "^0.14.5",

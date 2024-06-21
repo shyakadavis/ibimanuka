@@ -1,8 +1,6 @@
 import type { createRoute } from "@hono/zod-openapi";
 import type { Context } from "hono";
-import { getCookie } from "hono/cookie";
 import type { StatusCode } from "hono/utils/http-status";
-import type { Lucia } from "lucia";
 import { z } from "zod";
 
 export const success_without_data_schema = z.object({

@@ -1,5 +1,5 @@
 import { createRoute } from "@hono/zod-openapi";
-import { RiddleSchema } from "~/db/schema";
+import { riddle_schema } from "~/db/schema";
 import { is_admin } from "~/middleware/is-admin";
 import { is_authenticated } from "~/middleware/is-authenticated";
 import {
@@ -27,7 +27,7 @@ export const get_all_riddles = createRoute({
 			description: "Returns a list of all riddles",
 			content: {
 				"application/json": {
-					schema: success_with_data_schema(RiddleSchema.array()),
+					schema: success_with_data_schema(riddle_schema.array()),
 				},
 			},
 		},
@@ -47,7 +47,7 @@ export const get_single_riddle = createRoute({
 			description: "Returns a single riddle",
 			content: {
 				"application/json": {
-					schema: success_with_data_schema(RiddleSchema.openapi("Riddle")),
+					schema: success_with_data_schema(riddle_schema.openapi("Riddle")),
 				},
 			},
 		},
@@ -68,7 +68,7 @@ export const create_riddle = createRoute({
 			content: {
 				"application/json": {
 					// TODO: Extend this schema to not allow empty strings.
-					schema: RiddleSchema.omit({
+					schema: riddle_schema.omit({
 						id: true,
 						created_at: true,
 						updated_at: true,
@@ -99,7 +99,7 @@ export const update_riddle = createRoute({
 		body: {
 			content: {
 				"application/json": {
-					schema: RiddleSchema.omit({
+					schema: riddle_schema.omit({
 						id: true,
 						created_at: true,
 						updated_at: true,

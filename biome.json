@@ -1,15 +1,56 @@
 {
 	"$schema": "https://biomejs.dev/schemas/1.8.1/schema.json",
+	"files": {
+		"ignore": [".wrangler/"]
+	},
 	"organizeImports": {
 		"enabled": true
 	},
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": true
+			"recommended": true,
+			"correctness": { "noUnusedImports": { "level": "warn", "fix": "safe" } },
+			"style": {
+				"useImportType": { "level": "warn", "fix": "safe" },
+				"noUnusedTemplateLiteral": { "level": "warn", "fix": "safe" },
+				"useNamingConvention": {
+					"level": "error",
+					"options": {
+						"requireAscii": true,
+						"conventions": [
+							{
+								"selector": { "kind": "enum" },
+								"formats": ["CONSTANT_CASE"]
+							},
+							{
+								"selector": { "kind": "variable" },
+								"formats": ["snake_case"]
+							},
+							{
+								"selector": { "kind": "function" },
+								"formats": ["snake_case"]
+							},
+							{
+								"selector": { "kind": "typeProperty" },
+								"formats": ["PascalCase", "CONSTANT_CASE", "snake_case"]
+							},
+							{
+								"selector": { "kind": "typeAlias" },
+								"formats": ["PascalCase"]
+							},
+							{
+								"selector": { "kind": "functionParameter" },
+								"formats": ["snake_case"]
+							},
+							{
+								"selector": { "kind": "objectLiteralProperty" },
+								"formats": ["snake_case", "camelCase"]
+							}
+						]
+					}
+				}
+			}
 		}
-	},
-	"files": {
-		"ignore": [".wrangler/"]
 	}
 }

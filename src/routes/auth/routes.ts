@@ -1,5 +1,5 @@
 import { createRoute, z } from "@hono/zod-openapi";
-import { User } from "~/db/schema";
+import { user_schema } from "~/db/schema";
 import { check_if_already_logged_in } from "~/middleware/is-already-logged-in";
 import { is_authenticated } from "~/middleware/is-authenticated";
 import {
@@ -19,12 +19,13 @@ export const sign_up_with_email_and_password = createRoute({
 		body: {
 			content: {
 				"application/json": {
-					schema: User.pick({
-						email: true,
-						name: true,
-						surname: true,
-						given_name: true,
-					})
+					schema: user_schema
+						.pick({
+							email: true,
+							name: true,
+							surname: true,
+							given_name: true,
+						})
 						// We are extending with `password` because we will hash it later on to fill the `hashed_password` field in the database
 						.extend({ password: z.string().min(8) }),
 				},
@@ -51,9 +52,11 @@ export const log_in_with_email_and_password = createRoute({
 		body: {
 			content: {
 				"application/json": {
-					schema: User.pick({
-						email: true,
-					}).extend({ password: z.string().min(8) }),
+					schema: user_schema
+						.pick({
+							email: true,
+						})
+						.extend({ password: z.string().min(8) }),
 				},
 			},
 		},
