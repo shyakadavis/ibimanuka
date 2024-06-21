@@ -3,8 +3,11 @@ import { getCookie } from "hono/cookie";
 import { create_lucia_instance } from "~/db/lucia";
 import { new_http_error } from "~/utils/responses";
 
+/**
+ * Middleware to check if a user is authenticated, and deny access if they are not.
+ */
 export const is_authenticated: MiddlewareHandler = async (ctx, next) => {
-	const lucia = create_lucia_instance(ctx.env.DATABASE_URL);
+	const { lucia } = create_lucia_instance(ctx.env.DATABASE_URL);
 	const session_id = getCookie(ctx, lucia.sessionCookieName) ?? null;
 
 	if (!session_id) {

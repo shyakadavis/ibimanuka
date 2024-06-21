@@ -1,5 +1,6 @@
 import { createRoute } from "@hono/zod-openapi";
 import { RiddleSchema } from "~/db/schema";
+import { is_admin } from "~/middleware/is-admin";
 import { is_authenticated } from "~/middleware/is-authenticated";
 import {
 	error_responses,
@@ -57,7 +58,7 @@ export const get_single_riddle = createRoute({
 export const create_riddle = createRoute({
 	method: "post",
 	path: "/",
-	middleware: [is_authenticated],
+	middleware: [is_authenticated, is_admin],
 	tags: ["Riddles"],
 	summary: "Create a new riddle",
 	description:
@@ -88,7 +89,7 @@ export const create_riddle = createRoute({
 export const update_riddle = createRoute({
 	method: "put",
 	path: "/{id}",
-	middleware: [is_authenticated],
+	middleware: [is_authenticated, is_admin],
 	tags: ["Riddles"],
 	summary: "Update a riddle",
 	description:
@@ -119,7 +120,7 @@ export const update_riddle = createRoute({
 export const delete_riddle = createRoute({
 	method: "delete",
 	path: "/{id}",
-	middleware: [is_authenticated],
+	middleware: [is_authenticated, is_admin],
 	tags: ["Riddles"],
 	summary: "Delete a riddle",
 	description: "Deletes a riddle by its `id`.",

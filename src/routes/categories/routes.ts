@@ -1,5 +1,6 @@
 import { createRoute } from "@hono/zod-openapi";
 import { CategorySchema } from "~/db/schema";
+import { is_admin } from "~/middleware/is-admin";
 import { is_authenticated } from "~/middleware/is-authenticated";
 import {
 	error_responses,
@@ -57,7 +58,7 @@ export const get_single_category = createRoute({
 export const create_category = createRoute({
 	method: "post",
 	path: "/",
-	middleware: [is_authenticated],
+	middleware: [is_authenticated, is_admin],
 	tags: ["Categories"],
 	summary: "Create a new category",
 	description:
@@ -88,7 +89,7 @@ export const create_category = createRoute({
 export const update_category = createRoute({
 	method: "put",
 	path: "/{id}",
-	middleware: [is_authenticated],
+	middleware: [is_authenticated, is_admin],
 	tags: ["Categories"],
 	summary: "Update a category",
 	description:
@@ -119,7 +120,7 @@ export const update_category = createRoute({
 export const delete_category = createRoute({
 	method: "delete",
 	path: "/{id}",
-	middleware: [is_authenticated],
+	middleware: [is_authenticated, is_admin],
 	tags: ["Categories"],
 	summary: "Delete a category",
 	description: "Deletes a category by its `id`.",

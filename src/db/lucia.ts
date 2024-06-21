@@ -6,11 +6,23 @@ import * as schema from "./schema";
 
 declare module "lucia" {
 	interface Register {
-		Lucia: typeof create_lucia_instance;
-		DatabaseUserAttributes: typeof schema.users.$inferSelect;
+		Lucia: ReturnType<typeof create_lucia_instance>["lucia"];
+		DatabaseUserAttributes: DatabaseUserAttributes;
 	}
 }
 
+/**
+ * The attributes of a user that we want exposed over the network/context.
+ * We need to be mindful of what we expose, as we don't want to expose sensitive information, ergo we expose few attributes.
+ */
+type DatabaseUserAttributes = Pick<
+	typeof schema.users.$inferSelect,
+	"id" | "name" | "role"
+>;
+
+/**
+ * Create a new instance of Lucia with the given database URL. For convinience, this function also returns the database client.
+ */
 export function create_lucia_instance(db_url: string) {
 	const db = drizzle_client(db_url);
 	const adapter = new DrizzlePostgreSQLAdapter(
@@ -18,11 +30,12 @@ export function create_lucia_instance(db_url: string) {
 		schema.sessions,
 		schema.users,
 	);
-	const auth = new Lucia(adapter, {
+	const lucia = new Lucia(adapter, {
 		sessionCookie: { attributes: { secure: !DEV, sameSite: "lax" } },
-		getUserAttributes({ hashed_password, ...database_user_attributes }) {
-			return database_user_attributes;
+		getUserAttributes({ id, name, role }) {
+			return { id, name, role };
 		},
 	});
-	return auth;
+
+	return { lucia, db };
 }

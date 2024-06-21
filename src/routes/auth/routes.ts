@@ -1,5 +1,7 @@
 import { createRoute, z } from "@hono/zod-openapi";
 import { User } from "~/db/schema";
+import { check_if_already_logged_in } from "~/middleware/is-already-logged-in";
+import { is_authenticated } from "~/middleware/is-authenticated";
 import {
 	error_responses,
 	success_without_data_schema,
@@ -8,6 +10,7 @@ import {
 export const sign_up_with_email_and_password = createRoute({
 	method: "post",
 	path: "/sign-up",
+	middleware: [check_if_already_logged_in],
 	tags: ["Auth"],
 	summary: "Sign up with email and password",
 	description:
@@ -40,6 +43,7 @@ export const sign_up_with_email_and_password = createRoute({
 export const log_in_with_email_and_password = createRoute({
 	method: "post",
 	path: "/log-in",
+	middleware: [check_if_already_logged_in],
 	tags: ["Auth"],
 	summary: "Log in with email and password",
 	description: "Log in with email and password.",
@@ -57,6 +61,22 @@ export const log_in_with_email_and_password = createRoute({
 	responses: {
 		200: {
 			description: "User logged in",
+			content: { "application/json": { schema: success_without_data_schema } },
+		},
+		...error_responses,
+	},
+});
+
+export const log_out = createRoute({
+	method: "post",
+	path: "/log-out",
+	middleware: [is_authenticated],
+	tags: ["Auth"],
+	summary: "Log out",
+	description: "Log out the user.",
+	responses: {
+		200: {
+			description: "User logged out",
 			content: { "application/json": { schema: success_without_data_schema } },
 		},
 		...error_responses,

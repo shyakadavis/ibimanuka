@@ -7,6 +7,7 @@ import { users } from "~/db/schema";
 import { generate_new_id } from "~/utils/generate-id";
 import {
 	log_in_with_email_and_password,
+	log_out,
 	sign_up_with_email_and_password,
 } from "./routes";
 
@@ -16,23 +17,6 @@ export const auth_routes = new OpenAPIHono<{
 }>();
 
 auth_routes.openapi(sign_up_with_email_and_password, async (ctx) => {
-	// TODO
-	// console.log("hit sign up");
-	// const existing_session = ctx.get("session");
-	// console.log({ existing_session });
-	// if (existing_session) {
-	//   return ctx.json(
-	//     {
-	//       success: false,
-	//       error: {
-	//         status: 400,
-	//         message: "You are already logged in.",
-	//       },
-	//     },
-	//     400,
-	//   );
-	// }
-
 	const { email, name, given_name, surname, password } = ctx.req.valid("json");
 
 	// TODO: (Tech-debt)
@@ -99,26 +83,9 @@ auth_routes.openapi(sign_up_with_email_and_password, async (ctx) => {
 });
 
 auth_routes.openapi(log_in_with_email_and_password, async (ctx) => {
-	// TODO
-	// console.log("hit login");
-	// const existing_session = ctx.get("session");
-	// console.log({ existing_session });
-	// if (existing_session) {
-	//   return ctx.json(
-	//     {
-	//       success: false,
-	//       error: {
-	//         status: 400,
-	//         message: "You are already logged in.",
-	//       },
-	//     },
-	//     400,
-	//   );
-	// }
+	const { lucia, db } = create_lucia_instance(ctx.env.DATABASE_URL);
 
 	const { email, password } = ctx.req.valid("json");
-
-	const db = drizzle_client(ctx.env.DATABASE_URL);
 
 	const existing_user = await db.query.users.findFirst({
 		where: eq(users.email, email.toLowerCase()),
@@ -175,7 +142,6 @@ auth_routes.openapi(log_in_with_email_and_password, async (ctx) => {
 		);
 	}
 
-	const lucia = create_lucia_instance(ctx.env.DATABASE_URL);
 	const session = await lucia.createSession(existing_user.id, {});
 	const session_cookie = lucia.createSessionCookie(session.id);
 	ctx.header("Set-Cookie", session_cookie.serialize(), { append: true });
@@ -188,6 +154,29 @@ auth_routes.openapi(log_in_with_email_and_password, async (ctx) => {
 			message: "Logged in successfully",
 			// TODO: Is it a good idea to return the session cookie?
 			cookie: session_cookie,
+		},
+		200,
+	);
+});
+
+auth_routes.openapi(log_out, async (ctx) => {
+	const { lucia } = create_lucia_instance(ctx.env.DATABASE_URL);
+
+	const session = ctx.get("session");
+
+	if (session) {
+		await lucia.invalidateSession(session.id);
+		ctx.header("Set-Cookie", lucia.createBlankSessionCookie().serialize(), {
+			append: true,
+		});
+		ctx.set("session", null);
+		ctx.set("user", null);
+	}
+
+	return ctx.json(
+		{
+			success: true,
+			message: "Logged out successfully",
 		},
 		200,
 	);
