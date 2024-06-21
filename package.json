@@ -1,32 +1,32 @@
 {
-	"scripts": {
-		"dev": "wrangler dev src/index.ts",
-		"worker:deploy": "wrangler deploy --minify src/index.ts",
-		"check": "bun x @biomejs/biome check --write .",
-		"db:generate": "drizzle-kit generate",
-		"db:migrate": "drizzle-kit migrate",
-		"db:studio": "drizzle-kit studio",
-		"prepare": "husky"
-	},
-	"dependencies": {
-		"@hono/zod-openapi": "^0.14.5",
-		"@lucia-auth/adapter-drizzle": "^1.0.7",
-		"@neondatabase/serverless": "^0.9.3",
-		"@scalar/hono-api-reference": "^0.5.72",
-		"arctic": "^1.9.1",
-		"drizzle-orm": "^0.31.2",
-		"esm-env": "^1.0.0",
-		"hono": "^4.4.5",
-		"lucia": "^3.2.0",
-		"nanoid": "^5.0.7"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "1.8.1",
-		"@cloudflare/workers-types": "^4.20240529.0",
-		"dotenv": "^16.4.5",
-		"drizzle-kit": "^0.22.7",
-		"drizzle-zod": "^0.5.1",
-		"wrangler": "^3.57.2",
-		"zod": "^3.23.8"
-	}
+  "scripts": {
+    "dev": "wrangler dev src/index.ts",
+    "worker:deploy": "wrangler deploy --minify src/index.ts",
+    "check": "bun x @biomejs/biome check --write .",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio",
+    "prepare": "node .husky/install.mjs"
+  },
+  "dependencies": {
+    "@hono/zod-openapi": "^0.14.5",
+    "@lucia-auth/adapter-drizzle": "^1.0.7",
+    "@neondatabase/serverless": "^0.9.3",
+    "@scalar/hono-api-reference": "^0.5.72",
+    "arctic": "^1.9.1",
+    "drizzle-orm": "^0.31.2",
+    "esm-env": "^1.0.0",
+    "hono": "^4.4.5",
+    "lucia": "^3.2.0",
+    "nanoid": "^5.0.7"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.8.1",
+    "@cloudflare/workers-types": "^4.20240529.0",
+    "dotenv": "^16.4.5",
+    "drizzle-kit": "^0.22.7",
+    "drizzle-zod": "^0.5.1",
+    "wrangler": "^3.57.2",
+    "zod": "^3.23.8"
+  }
 }
