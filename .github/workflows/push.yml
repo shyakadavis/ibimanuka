@@ -1,4 +1,4 @@
-name: Deploy Worker
+name: Deploy
 
 on:
   push:
@@ -7,19 +7,11 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to Cloudflare Workers
     runs-on: ubuntu-latest
-    timeout-minutes: 60
-    needs: test
+    name: Deploy to Cloudflare Workers
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Install Bun
-        uses: oven-sh/setup-bun@v1
-
-      - name: Build & Deploy Worker
+      - uses: actions/checkout@v4
+      - name: Deploy
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
