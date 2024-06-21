@@ -1,5 +1,7 @@
 import { createRoute } from "@hono/zod-openapi";
 import { RiddleSchema } from "~/db/schema";
+import { is_admin } from "~/middleware/is-admin";
+import { is_authenticated } from "~/middleware/is-authenticated";
 import {
 	error_responses,
 	success_with_data_schema,
@@ -39,9 +41,7 @@ export const get_single_riddle = createRoute({
 	tags: ["Riddles"],
 	summary: "Get a single riddle",
 	description: "Returns a single riddle by its `id`.",
-	request: {
-		params: get_single_riddle_param_schema,
-	},
+	request: { params: get_single_riddle_param_schema },
 	responses: {
 		200: {
 			description: "Returns a single riddle",
@@ -58,6 +58,7 @@ export const get_single_riddle = createRoute({
 export const create_riddle = createRoute({
 	method: "post",
 	path: "/",
+	middleware: [is_authenticated, is_admin],
 	tags: ["Riddles"],
 	summary: "Create a new riddle",
 	description:
@@ -78,11 +79,7 @@ export const create_riddle = createRoute({
 	},
 	responses: {
 		201: {
-			content: {
-				"application/json": {
-					schema: success_without_data_schema,
-				},
-			},
+			content: { "application/json": { schema: success_without_data_schema } },
 			description: "Riddle created.",
 		},
 		...error_responses,
@@ -92,6 +89,7 @@ export const create_riddle = createRoute({
 export const update_riddle = createRoute({
 	method: "put",
 	path: "/{id}",
+	middleware: [is_authenticated, is_admin],
 	tags: ["Riddles"],
 	summary: "Update a riddle",
 	description:
@@ -112,11 +110,7 @@ export const update_riddle = createRoute({
 	},
 	responses: {
 		200: {
-			content: {
-				"application/json": {
-					schema: success_without_data_schema,
-				},
-			},
+			content: { "application/json": { schema: success_without_data_schema } },
 			description: "Riddle updated.",
 		},
 		...error_responses,
@@ -126,19 +120,14 @@ export const update_riddle = createRoute({
 export const delete_riddle = createRoute({
 	method: "delete",
 	path: "/{id}",
+	middleware: [is_authenticated, is_admin],
 	tags: ["Riddles"],
 	summary: "Delete a riddle",
 	description: "Deletes a riddle by its `id`.",
-	request: {
-		params: delete_riddle_param_schema,
-	},
+	request: { params: delete_riddle_param_schema },
 	responses: {
 		200: {
-			content: {
-				"application/json": {
-					schema: success_without_data_schema,
-				},
-			},
+			content: { "application/json": { schema: success_without_data_schema } },
 			description: "Riddle deleted.",
 		},
 		...error_responses,

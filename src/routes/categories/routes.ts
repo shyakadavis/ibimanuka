@@ -1,5 +1,7 @@
 import { createRoute } from "@hono/zod-openapi";
 import { CategorySchema } from "~/db/schema";
+import { is_admin } from "~/middleware/is-admin";
+import { is_authenticated } from "~/middleware/is-authenticated";
 import {
 	error_responses,
 	success_with_data_schema,
@@ -39,9 +41,7 @@ export const get_single_category = createRoute({
 	tags: ["Categories"],
 	summary: "Get a single category",
 	description: "Returns a single category by its `id`.",
-	request: {
-		params: get_single_category_param_schema,
-	},
+	request: { params: get_single_category_param_schema },
 	responses: {
 		200: {
 			description: "Returns a single category",
@@ -58,6 +58,7 @@ export const get_single_category = createRoute({
 export const create_category = createRoute({
 	method: "post",
 	path: "/",
+	middleware: [is_authenticated, is_admin],
 	tags: ["Categories"],
 	summary: "Create a new category",
 	description:
@@ -78,11 +79,7 @@ export const create_category = createRoute({
 	},
 	responses: {
 		201: {
-			content: {
-				"application/json": {
-					schema: success_without_data_schema,
-				},
-			},
+			content: { "application/json": { schema: success_without_data_schema } },
 			description: "Category created.",
 		},
 		...error_responses,
@@ -92,6 +89,7 @@ export const create_category = createRoute({
 export const update_category = createRoute({
 	method: "put",
 	path: "/{id}",
+	middleware: [is_authenticated, is_admin],
 	tags: ["Categories"],
 	summary: "Update a category",
 	description:
@@ -112,11 +110,7 @@ export const update_category = createRoute({
 	},
 	responses: {
 		200: {
-			content: {
-				"application/json": {
-					schema: success_without_data_schema,
-				},
-			},
+			content: { "application/json": { schema: success_without_data_schema } },
 			description: "Category updated.",
 		},
 		...error_responses,
@@ -126,19 +120,14 @@ export const update_category = createRoute({
 export const delete_category = createRoute({
 	method: "delete",
 	path: "/{id}",
+	middleware: [is_authenticated, is_admin],
 	tags: ["Categories"],
 	summary: "Delete a category",
 	description: "Deletes a category by its `id`.",
-	request: {
-		params: delete_category_param_schema,
-	},
+	request: { params: delete_category_param_schema },
 	responses: {
 		200: {
-			content: {
-				"application/json": {
-					schema: success_without_data_schema,
-				},
-			},
+			content: { "application/json": { schema: success_without_data_schema } },
 			description: "Category deleted.",
 		},
 		...error_responses,

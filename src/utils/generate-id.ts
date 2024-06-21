@@ -5,8 +5,9 @@ export const nanoid = customAlphabet(
 );
 
 const prefixes = {
-	riddle: "rdl",
 	category: "cat",
+	riddle: "rdl",
+	user: "usr",
 } as const;
 
 /**

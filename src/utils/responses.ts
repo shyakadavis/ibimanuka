@@ -1,4 +1,8 @@
 import type { createRoute } from "@hono/zod-openapi";
+import type { Context } from "hono";
+import { getCookie } from "hono/cookie";
+import type { StatusCode } from "hono/utils/http-status";
+import type { Lucia } from "lucia";
 import { z } from "zod";
 
 export const success_without_data_schema = z.object({
@@ -63,3 +67,15 @@ export const error_responses = {
 		},
 	},
 } satisfies Responses;
+
+export const new_http_error = ({
+	ctx,
+	status,
+	message,
+}: {
+	ctx: Context;
+	status: StatusCode;
+	message: string;
+}) => {
+	return ctx.json({ success: false, error: { status, message } }, status);
+};

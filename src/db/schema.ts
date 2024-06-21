@@ -61,15 +61,16 @@ export const users = pgTable(
 
 /**
  * @name sessions
- * @description Table for sessions
+ * @description Table for sessions.
+ * Note: We are leaving camelCase instances because of some strictness with Lucia about type mismatches.
  */
 export const sessions = pgTable("sessions", {
 	id: varchar("id").primaryKey(),
-	user_id: varchar("user_id")
+	userId: varchar("user_id")
 		.notNull()
 		.references(() => users.id, { onDelete: "cascade" }),
-	created_at: timestamp("created_at").notNull().defaultNow(),
-	expires_at: timestamp("expires_at", {
+	createdAt: timestamp("created_at").notNull().defaultNow(),
+	expiresAt: timestamp("expires_at", {
 		withTimezone: true,
 		mode: "date",
 	}).notNull(),
@@ -131,6 +132,14 @@ export const categories = pgTable(
 // ============================================================================
 // Types
 // ============================================================================
+
+/**
+ * @name User
+ * @description Type for users. We are refining the `email` field to be of a valid email type.
+ */
+export const User = createInsertSchema(users, {
+	email: z.string().email(),
+});
 
 /**
  * @name RiddleSchema
