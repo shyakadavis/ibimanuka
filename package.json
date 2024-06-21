@@ -14,18 +14,18 @@
 		"@scalar/hono-api-reference": "^0.5.72",
 		"arctic": "^1.9.1",
 		"drizzle-orm": "^0.31.2",
-		"drizzle-zod": "^0.5.1",
 		"esm-env": "^1.0.0",
 		"hono": "^4.4.5",
 		"lucia": "^3.2.0",
-		"nanoid": "^5.0.7",
-		"zod": "^3.23.8"
+		"nanoid": "^5.0.7"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.8.1",
 		"@cloudflare/workers-types": "^4.20240529.0",
 		"dotenv": "^16.4.5",
 		"drizzle-kit": "^0.22.7",
-		"wrangler": "^3.57.2"
+		"drizzle-zod": "^0.5.1",
+		"wrangler": "^3.57.2",
+		"zod": "^3.23.8"
 	}
 }

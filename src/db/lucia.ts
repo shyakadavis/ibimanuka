@@ -1,7 +1,7 @@
 import { DrizzlePostgreSQLAdapter } from "@lucia-auth/adapter-drizzle";
 import { DEV } from "esm-env";
 import { Lucia } from "lucia";
-import { drizzle_client } from ".";
+import { create_drizzle_client } from ".";
 import * as schema from "./schema";
 
 declare module "lucia" {
@@ -24,7 +24,7 @@ type DatabaseUserAttributes = Pick<
  * Create a new instance of Lucia with the given database URL. For convinience, this function also returns the database client.
  */
 export function create_lucia_instance(db_url: string) {
-	const db = drizzle_client(db_url);
+	const db = create_drizzle_client(db_url);
 	const adapter = new DrizzlePostgreSQLAdapter(
 		db,
 		schema.sessions,

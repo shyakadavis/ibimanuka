@@ -1,6 +1,6 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { eq } from "drizzle-orm";
-import { drizzle_client } from "~/db";
+import { create_drizzle_client } from "~/db";
 import { riddles } from "~/db/schema";
 import { generate_new_id } from "~/utils/generate-id";
 import {
@@ -18,7 +18,7 @@ export const riddles_routes = new OpenAPIHono<{
 
 riddles_routes.openapi(get_all_riddles, async (ctx) => {
 	const { limit, offset } = ctx.req.valid("query");
-	const db = drizzle_client(ctx.env.DATABASE_URL);
+	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 	const data = await db.query.riddles.findMany({ limit, offset });
 	return ctx.json(
 		{
@@ -32,7 +32,7 @@ riddles_routes.openapi(get_all_riddles, async (ctx) => {
 
 riddles_routes.openapi(get_single_riddle, async (ctx) => {
 	const { id } = ctx.req.valid("param");
-	const db = drizzle_client(ctx.env.DATABASE_URL);
+	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 	const data = await db.query.riddles.findFirst({
 		where: eq(riddles.id, id),
 	});
@@ -61,7 +61,7 @@ riddles_routes.openapi(get_single_riddle, async (ctx) => {
 riddles_routes.openapi(create_riddle, async (ctx) => {
 	const { question, answer, categories, complexity_level, hints } =
 		ctx.req.valid("json");
-	const db = drizzle_client(ctx.env.DATABASE_URL);
+	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 	const existing_riddle = await db.query.riddles.findFirst({
 		where: eq(riddles.question, question),
 		columns: { question: true, answer: true },
@@ -111,7 +111,7 @@ riddles_routes.openapi(update_riddle, async (ctx) => {
 	const { id } = ctx.req.valid("param");
 	const { question, answer, categories, complexity_level, hints } =
 		ctx.req.valid("json");
-	const db = drizzle_client(ctx.env.DATABASE_URL);
+	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 	const existing_riddle = await db.query.riddles.findFirst({
 		where: eq(riddles.id, id),
 		columns: { question: true },
@@ -179,7 +179,7 @@ riddles_routes.openapi(update_riddle, async (ctx) => {
 
 riddles_routes.openapi(delete_riddle, async (ctx) => {
 	const { id } = ctx.req.valid("param");
-	const db = drizzle_client(ctx.env.DATABASE_URL);
+	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 	const existing_riddle = await db.query.riddles.findFirst({
 		where: eq(riddles.id, id),
 		columns: { id: true },

@@ -1,6 +1,6 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { eq } from "drizzle-orm";
-import { drizzle_client } from "~/db";
+import { create_drizzle_client } from "~/db";
 import { categories } from "~/db/schema";
 import { generate_new_id } from "~/utils/generate-id";
 import {
@@ -18,7 +18,7 @@ export const categories_routes = new OpenAPIHono<{
 
 categories_routes.openapi(get_all_categories, async (ctx) => {
 	const { limit, offset } = ctx.req.valid("query");
-	const db = drizzle_client(ctx.env.DATABASE_URL);
+	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 	const data = await db.query.categories.findMany({ limit, offset });
 	return ctx.json(
 		{
@@ -32,7 +32,7 @@ categories_routes.openapi(get_all_categories, async (ctx) => {
 
 categories_routes.openapi(get_single_category, async (ctx) => {
 	const { id } = ctx.req.valid("param");
-	const db = drizzle_client(ctx.env.DATABASE_URL);
+	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 	const data = await db.query.categories.findFirst({
 		where: eq(categories.id, id),
 	});
@@ -60,7 +60,7 @@ categories_routes.openapi(get_single_category, async (ctx) => {
 
 categories_routes.openapi(create_category, async (ctx) => {
 	const { name, description } = ctx.req.valid("json");
-	const db = drizzle_client(ctx.env.DATABASE_URL);
+	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 	const existing_category = await db.query.categories.findFirst({
 		where: eq(categories.name, name),
 		columns: { name: true },
@@ -106,7 +106,7 @@ categories_routes.openapi(create_category, async (ctx) => {
 categories_routes.openapi(update_category, async (ctx) => {
 	const { id } = ctx.req.valid("param");
 	const { name, description } = ctx.req.valid("json");
-	const db = drizzle_client(ctx.env.DATABASE_URL);
+	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 	const existing_category = await db.query.categories.findFirst({
 		where: eq(categories.id, id),
 		columns: { id: true, name: true },
@@ -171,7 +171,7 @@ categories_routes.openapi(update_category, async (ctx) => {
 
 categories_routes.openapi(delete_category, async (ctx) => {
 	const { id } = ctx.req.valid("param");
-	const db = drizzle_client(ctx.env.DATABASE_URL);
+	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 	const existing_category = await db.query.categories.findFirst({
 		where: eq(categories.id, id),
 		columns: { id: true },

@@ -1,7 +1,7 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { eq } from "drizzle-orm";
 import { Scrypt } from "lucia";
-import { drizzle_client } from "~/db";
+import { create_drizzle_client } from "~/db";
 import { create_lucia_instance } from "~/db/lucia";
 import { users } from "~/db/schema";
 import { generate_new_id } from "~/utils/generate-id";
@@ -27,7 +27,7 @@ auth_routes.openapi(sign_up_with_email_and_password, async (ctx) => {
 	const scrypt = new Scrypt();
 	const hashed_password = await scrypt.hash(password);
 
-	const db = drizzle_client(ctx.env.DATABASE_URL);
+	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
 	const existing_user = await db.query.users.findFirst({
 		where: eq(users.email, email.toLowerCase()),
@@ -89,7 +89,13 @@ auth_routes.openapi(log_in_with_email_and_password, async (ctx) => {
 
 	const existing_user = await db.query.users.findFirst({
 		where: eq(users.email, email.toLowerCase()),
-		columns: { id: true, email: true, hashed_password: true },
+		columns: {
+			id: true,
+			email: true,
+			hashed_password: true,
+			name: true,
+			role: true,
+		},
 	});
 
 	if (!existing_user) {
@@ -145,14 +151,26 @@ auth_routes.openapi(log_in_with_email_and_password, async (ctx) => {
 	const session = await lucia.createSession(existing_user.id, {});
 	const session_cookie = lucia.createSessionCookie(session.id);
 	ctx.header("Set-Cookie", session_cookie.serialize(), { append: true });
-	ctx.set("user", { id: existing_user.id });
+	// TODO:
+	// As I'm still getting used to Hono, I'm not sure if this is necessary.
+	// What is `context` in Hono? Does setting it here at the end of my route reflect across other routes?
+	// If not, then we should remove the user-and-session-setting part from here and leave it be in the middleware.
+	// But then again, what if the route is not protected by the middleware, and I still need to access the user and session?
+	// Will revisit this later.
+	ctx.set("user", {
+		id: existing_user.id,
+		name: existing_user.name,
+		role: existing_user.role,
+	});
 	ctx.set("session", session);
 
 	return ctx.json(
 		{
 			success: true,
 			message: "Logged in successfully",
-			// TODO: Is it a good idea to return the session cookie?
+			// TODO:
+			// Is it a good idea to return the session cookie?
+			// Also, how can I return the cookie in the OpenAPI schema? As in returning the cookie below the headers response.
 			cookie: session_cookie,
 		},
 		200,
