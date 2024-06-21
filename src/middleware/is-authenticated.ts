@@ -11,8 +11,8 @@ export const is_authenticated: MiddlewareHandler = async (ctx, next) => {
 	const session_id = getCookie(ctx, lucia.sessionCookieName) ?? null;
 
 	if (!session_id) {
-		ctx.set("user", null);
-		ctx.set("session", null);
+		ctx.set("User", null);
+		ctx.set("Session", null);
 
 		return new_http_error({
 			ctx,
@@ -38,8 +38,8 @@ export const is_authenticated: MiddlewareHandler = async (ctx, next) => {
 		);
 	}
 
-	ctx.set("user", user);
-	ctx.set("session", session);
+	ctx.set("User", user);
+	ctx.set("Session", session);
 
 	return next();
 };

@@ -157,12 +157,12 @@ auth_routes.openapi(log_in_with_email_and_password, async (ctx) => {
 	// If not, then we should remove the user-and-session-setting part from here and leave it be in the middleware.
 	// But then again, what if the route is not protected by the middleware, and I still need to access the user and session?
 	// Will revisit this later.
-	ctx.set("user", {
+	ctx.set("User", {
 		id: existing_user.id,
 		name: existing_user.name,
 		role: existing_user.role,
 	});
-	ctx.set("session", session);
+	ctx.set("Session", session);
 
 	return ctx.json(
 		{
@@ -180,15 +180,15 @@ auth_routes.openapi(log_in_with_email_and_password, async (ctx) => {
 auth_routes.openapi(log_out, async (ctx) => {
 	const { lucia } = create_lucia_instance(ctx.env.DATABASE_URL);
 
-	const session = ctx.get("session");
+	const session = ctx.get("Session");
 
 	if (session) {
 		await lucia.invalidateSession(session.id);
 		ctx.header("Set-Cookie", lucia.createBlankSessionCookie().serialize(), {
 			append: true,
 		});
-		ctx.set("session", null);
-		ctx.set("user", null);
+		ctx.set("Session", null);
+		ctx.set("User", null);
 	}
 
 	return ctx.json(

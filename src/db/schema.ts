@@ -134,27 +134,27 @@ export const categories = pgTable(
 // ============================================================================
 
 /**
- * @name User
+ * @name user_schema
  * @description Type for users. We are refining the `email` field to be of a valid email type.
  */
-export const User = createInsertSchema(users, {
+export const user_schema = createInsertSchema(users, {
 	email: z.string().email(),
 });
 
 /**
- * @name RiddleSchema
+ * @name riddle_schema
  * @description Schema for riddles. Used for various validation and serialization tasks.
  ⚠️ We are manually refining array fields because `drizzle-zod` does not parse arrays correctly. See: https://github.com/drizzle-team/drizzle-orm/issues/1609
  * @example const RidleSchema.omit({id: true, created_at: true,updated_at: true}) can be used to create a schema for creating a new riddle.
  */
-export const RiddleSchema = createInsertSchema(riddles, {
+export const riddle_schema = createInsertSchema(riddles, {
 	categories: z.array(z.string().max(16)),
 	hints: z.array(z.string().max(256)),
 });
 
 /**
- * @name CategorySchema
+ * @name category_schema
  * @description Schema for categories. Used for various validation and serialization tasks.
- * @example const CategorySchema.omit({id: true, created_at: true,updated_at: true}) can be used to create a schema for creating a new category.
+ * @example const category_schema.omit({id: true, created_at: true,updated_at: true}) can be used to create a schema for creating a new category.
  */
-export const CategorySchema = createInsertSchema(categories);
+export const category_schema = createInsertSchema(categories);

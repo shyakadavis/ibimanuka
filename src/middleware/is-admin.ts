@@ -6,7 +6,7 @@ import { new_http_error } from "~/utils/responses";
  * Middleware to check if a user is an admin, and deny access if they are not.
  */
 export const is_admin: MiddlewareHandler = async (ctx, next) => {
-	const user = ctx.get("user") as User;
+	const user = ctx.get("User") as User;
 
 	if (!user || user.role !== "ADMIN") {
 		return new_http_error({

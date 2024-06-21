@@ -1,5 +1,5 @@
 import { createRoute } from "@hono/zod-openapi";
-import { CategorySchema } from "~/db/schema";
+import { category_schema } from "~/db/schema";
 import { is_admin } from "~/middleware/is-admin";
 import { is_authenticated } from "~/middleware/is-authenticated";
 import {
@@ -27,7 +27,7 @@ export const get_all_categories = createRoute({
 			description: "Returns a list of all categories",
 			content: {
 				"application/json": {
-					schema: success_with_data_schema(CategorySchema.array()),
+					schema: success_with_data_schema(category_schema.array()),
 				},
 			},
 		},
@@ -47,7 +47,7 @@ export const get_single_category = createRoute({
 			description: "Returns a single category",
 			content: {
 				"application/json": {
-					schema: success_with_data_schema(CategorySchema.openapi("Category")),
+					schema: success_with_data_schema(category_schema.openapi("Category")),
 				},
 			},
 		},
@@ -68,7 +68,7 @@ export const create_category = createRoute({
 			content: {
 				"application/json": {
 					// TODO: Extend this schema to not allow empty strings.
-					schema: CategorySchema.omit({
+					schema: category_schema.omit({
 						id: true,
 						created_at: true,
 						updated_at: true,
@@ -99,7 +99,7 @@ export const update_category = createRoute({
 		body: {
 			content: {
 				"application/json": {
-					schema: CategorySchema.omit({
+					schema: category_schema.omit({
 						id: true,
 						created_at: true,
 						updated_at: true,

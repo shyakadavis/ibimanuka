@@ -3,6 +3,6 @@ type Bindings = {
 };
 
 type Variables = {
-	user: import("lucia").User | null;
-	session: import("lucia").Session | null;
+	User: import("lucia").User | null;
+	Session: import("lucia").Session | null;
 };
