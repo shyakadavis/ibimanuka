@@ -1,2 +1,4 @@
 # neon db url
 DATABASE_URL=""
+# cloudflare api token - only used by the gh action runner to publish the worker on each push to the main branch
+CLOUDFLARE_API_TOKEN=""
