@@ -6,7 +6,7 @@
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
 		"db:studio": "drizzle-kit studio",
-		"prepare": "husky"
+		"prepare": "bun .husky/install.mjs"
 	},
 	"dependencies": {
 		"@hono/zod-openapi": "^0.14.5",
