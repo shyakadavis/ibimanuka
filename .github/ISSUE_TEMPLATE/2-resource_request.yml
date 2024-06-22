@@ -1,0 +1,16 @@
+name: Resource request
+description: Request a new resource
+labels: ["type: resource"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This project's goal is to create archival resources about RWANDA. If you have a resource you'd like to see added, please fill out the form below. If you're able to submit a PR, that's even better! Thanks for contributing!
+  - type: textarea
+    id: resource-description
+    attributes:
+      label: Describe the resource
+      description: A clear and concise description of the resource. If you intend to submit a PR for this resource, tell us how in the description. Thanks!
+      placeholder: Resource description
+    validations:
+      required: true
