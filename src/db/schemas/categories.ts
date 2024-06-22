@@ -6,17 +6,17 @@ import { createInsertSchema } from "drizzle-zod";
  * @description Table for categories
  */
 export const categories = pgTable(
-  "categories",
-  {
-    id: varchar("id", { length: 16 }).primaryKey().notNull(),
-    name: varchar("name", { length: 16 }).notNull().unique(),
-    description: varchar("description", { length: 256 }).notNull(),
-    created_at: timestamp("created_at").notNull().defaultNow(),
-    updated_at: timestamp("updated_at").notNull().defaultNow(),
-  },
-  ({ name }) => {
-    return { name_index: index("categories_name_index").on(name.asc()) };
-  },
+	"categories",
+	{
+		id: varchar("id", { length: 16 }).primaryKey().notNull(),
+		name: varchar("name", { length: 16 }).notNull().unique(),
+		description: varchar("description", { length: 256 }).notNull(),
+		created_at: timestamp("created_at").notNull().defaultNow(),
+		updated_at: timestamp("updated_at").notNull().defaultNow(),
+	},
+	({ name }) => {
+		return { name_index: index("categories_name_index").on(name.asc()) };
+	},
 );
 
 /**
