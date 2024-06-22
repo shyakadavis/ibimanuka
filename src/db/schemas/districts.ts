@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import {
 	doublePrecision,
 	index,
@@ -7,6 +8,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { provinces } from "./provinces";
+import { sectors } from "./sectors";
 
 /**
  * @name districts
@@ -37,3 +39,11 @@ export const districts = pgTable(
  * @example const district_schema.omit({id: true, created_at: true,updated_at: true}) can be used to create a schema for creating a new district.
  */
 export const district_schema = createInsertSchema(districts);
+
+export const district_relations = relations(districts, ({ one, many }) => ({
+	province: one(provinces, {
+		fields: [districts.province_id],
+		references: [provinces.id],
+	}),
+	sectors: many(sectors),
+}));

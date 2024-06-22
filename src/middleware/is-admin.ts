@@ -8,11 +8,13 @@ import { new_http_error } from "~/utils/responses";
 export const is_admin: MiddlewareHandler = async (ctx, next) => {
 	const user = ctx.get("User") as User;
 
+	console.log({ user });
+
 	if (!user || user.role !== "ADMIN") {
 		return new_http_error({
 			ctx,
 			status: 403,
-			message: "You are not authorized to access this resource.",
+			message: "Unauthorized",
 		});
 	}
 

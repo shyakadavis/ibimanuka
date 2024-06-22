@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import {
 	doublePrecision,
 	index,
@@ -7,6 +8,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { sectors } from "./sectors";
+import { villages } from "./villages";
 
 /**
  * @name cells
@@ -37,3 +39,12 @@ export const cells = pgTable(
  * @example const cell_schema.omit({id: true, created_at: true,updated_at: true}) can be used to create a schema for creating a new cell.
  */
 export const cell_schema = createInsertSchema(cells);
+
+export const cells_relations = relations(cells, ({ one, many }) => ({
+	sector: one(sectors, {
+		fields: [cells.sector_id],
+		references: [sectors.id],
+	}),
+	// TODO: Is it possible to reference provinces, districts from cells?
+	villages: many(villages),
+}));
