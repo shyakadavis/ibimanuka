@@ -22,6 +22,6 @@ export const categories = pgTable(
 /**
  * @name category_schema
  * @description Schema for categories. Used for various validation and serialization tasks.
- * @example const category_schema.omit({id: true, created_at: true,updated_at: true}) can be used to create a ~/db/schemas for creating a new category.
+ * @example const category_schema.omit({id: true, created_at: true,updated_at: true}) can be used to create a schema for creating a new category.
  */
 export const category_schema = createInsertSchema(categories);
