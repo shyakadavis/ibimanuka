@@ -16,3 +16,4 @@ jobs:
 
       # run any `bun` or `bun x` command
       - run: bun check
+      - run: bun check:types

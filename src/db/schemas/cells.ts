@@ -45,6 +45,5 @@ export const cells_relations = relations(cells, ({ one, many }) => ({
 		fields: [cells.sector_id],
 		references: [sectors.id],
 	}),
-	// TODO: Is it possible to reference provinces, districts from cells?
 	villages: many(villages),
 }));

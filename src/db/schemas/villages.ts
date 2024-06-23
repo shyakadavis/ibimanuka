@@ -39,10 +39,9 @@ export const villages = pgTable(
  */
 export const village_schema = createInsertSchema(villages);
 
-export const villages_relations = relations(villages, ({ one, many }) => ({
+export const villages_relations = relations(villages, ({ one }) => ({
 	cell: one(cells, {
 		fields: [villages.sector_id],
-		references: [cells.id],
+		references: [cells.ids],
 	}),
-	// TODO: Is it possible to reference provinces, districts, sectors from villages?
 }));
