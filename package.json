@@ -3,7 +3,7 @@
 		"dev": "wrangler dev src/index.ts",
 		"worker:deploy": "wrangler deploy --minify src/index.ts",
 		"check": "bun x @biomejs/biome check --write .",
-		"check:types": "bun x tsc --noEmit --pretty",
+		"check:types": "tsc --noEmit --pretty",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
 		"db:studio": "drizzle-kit studio"
