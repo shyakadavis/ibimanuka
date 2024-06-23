@@ -22,8 +22,8 @@ export const villages = pgTable(
 		sector_id: varchar("sector_id", { length: 16 })
 			.notNull()
 			.references(() => cells.id, { onDelete: "cascade" }),
-		latitude: doublePrecision("latitude").notNull(),
-		longitude: doublePrecision("longitude").notNull(),
+		latitude: doublePrecision("latitude"),
+		longitude: doublePrecision("longitude"),
 		created_at: timestamp("created_at").notNull().defaultNow(),
 		updated_at: timestamp("updated_at").notNull().defaultNow(),
 	},
