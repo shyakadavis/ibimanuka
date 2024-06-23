@@ -1,7 +1,7 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { eq } from "drizzle-orm";
 import { create_drizzle_client } from "~/db";
-import { district_schema, provinces } from "~/db/schemas";
+import { district_schema, province_schema, provinces } from "~/db/schemas";
 import { generate_new_id } from "~/utils/generate-id";
 import { parse_fields_to_columns } from "~/utils/requests";
 import {
@@ -17,25 +17,9 @@ export const provinces_routes = new OpenAPIHono<{
 	Variables: Variables;
 }>();
 
-// TODO: Make this a helper function that can be reused in other routes
-// function get_desired_columns_from_fields_query_param(fields: string) {
-// 	const schema_keys = [...district_schema.keyof().options];
-// 	type SchemaKey = (typeof schema_keys)[number];
-// 	const columns: Partial<Record<SchemaKey, boolean>> = {};
-
-// 	const fields_array = fields.split(",");
-
-// 	for (const field of fields_array) {
-// 		if (schema_keys.includes(field as SchemaKey)) {
-// 			columns[field as SchemaKey] = true;
-// 		}
-// 	}
-
-// 	return columns;
-// }
-
 provinces_routes.openapi(get_all_provinces, async (ctx) => {
-	const { limit, offset, districts, fields } = ctx.req.valid("query");
+	const { limit, offset, fields, districts, district_limit, district_fields } =
+		ctx.req.valid("query");
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
@@ -43,15 +27,26 @@ provinces_routes.openapi(get_all_provinces, async (ctx) => {
 		limit,
 		offset,
 		columns: fields
-			? parse_fields_to_columns(district_schema, fields)
+			? parse_fields_to_columns(province_schema, fields)
 			: undefined,
-		with: districts ? { districts: true } : undefined,
+		with: districts
+			? {
+					districts: {
+						limit: district_limit,
+						columns: district_fields
+							? parse_fields_to_columns(district_schema, district_fields)
+							: undefined,
+						// TODO: Decide if we want to recursively handle queries for sectors, cells, and villages
+						// with: { sectors: true },
+					},
+				}
+			: undefined,
 	});
 
 	return ctx.json(
 		{
 			success: true,
-			message: `Returned ${data.length} provinces`,
+			message: "Successfully returned provinces",
 			data,
 		},
 		200,

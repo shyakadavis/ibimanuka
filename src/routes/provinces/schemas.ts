@@ -52,7 +52,30 @@ export const get_provinces_query_params_schema = z.object({
 			example: "true",
 		}),
 
-	// TODO: Add the limit for the number of districts to return
+	district_limit: z
+		.string()
+		.transform(Number)
+		.optional()
+		.openapi({
+			param: {
+				name: "district_limit",
+				in: "query",
+				description: "The number of districts to return",
+			},
+			example: "10",
+		}),
+
+	district_fields: z
+		.string()
+		.optional()
+		.openapi({
+			param: {
+				name: "district_fields",
+				in: "query",
+				description: "The fields to return for districts",
+			},
+			example: "name,longitude,latitude",
+		}),
 });
 
 export const get_single_province_param_schema = z.object({
