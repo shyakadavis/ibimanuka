@@ -13,6 +13,7 @@ export const get_provinces_query_params_schema = z.object({
 			},
 			example: "10",
 		}),
+
 	offset: z
 		.string()
 		.transform(Number)
@@ -25,6 +26,33 @@ export const get_provinces_query_params_schema = z.object({
 			},
 			example: "0",
 		}),
+
+	fields: z
+		.string()
+		.optional()
+		.openapi({
+			param: {
+				name: "fields",
+				in: "query",
+				description: "The fields to return",
+			},
+			example: "name,longitude,latitude",
+		}),
+
+	districts: z
+		.string()
+		.transform(Boolean)
+		.optional()
+		.openapi({
+			param: {
+				name: "districts",
+				in: "query",
+				description: "Whether to include districts in the response",
+			},
+			example: "true",
+		}),
+
+	// TODO: Add the limit for the number of districts to return
 });
 
 export const get_single_province_param_schema = z.object({

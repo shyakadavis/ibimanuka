@@ -1,8 +1,9 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { eq } from "drizzle-orm";
 import { create_drizzle_client } from "~/db";
-import { provinces } from "~/db/schemas";
+import { district_schema, provinces } from "~/db/schemas";
 import { generate_new_id } from "~/utils/generate-id";
+import { parse_fields_to_columns } from "~/utils/requests";
 import {
 	create_province,
 	delete_province,
@@ -16,10 +17,37 @@ export const provinces_routes = new OpenAPIHono<{
 	Variables: Variables;
 }>();
 
+// TODO: Make this a helper function that can be reused in other routes
+// function get_desired_columns_from_fields_query_param(fields: string) {
+// 	const schema_keys = [...district_schema.keyof().options];
+// 	type SchemaKey = (typeof schema_keys)[number];
+// 	const columns: Partial<Record<SchemaKey, boolean>> = {};
+
+// 	const fields_array = fields.split(",");
+
+// 	for (const field of fields_array) {
+// 		if (schema_keys.includes(field as SchemaKey)) {
+// 			columns[field as SchemaKey] = true;
+// 		}
+// 	}
+
+// 	return columns;
+// }
+
 provinces_routes.openapi(get_all_provinces, async (ctx) => {
-	const { limit, offset } = ctx.req.valid("query");
+	const { limit, offset, districts, fields } = ctx.req.valid("query");
+
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
-	const data = await db.query.provinces.findMany({ limit, offset });
+
+	const data = await db.query.provinces.findMany({
+		limit,
+		offset,
+		columns: fields
+			? parse_fields_to_columns(district_schema, fields)
+			: undefined,
+		with: districts ? { districts: true } : undefined,
+	});
+
 	return ctx.json(
 		{
 			success: true,

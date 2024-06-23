@@ -21,6 +21,7 @@
 					"level": "error",
 					"options": {
 						"requireAscii": true,
+						"strictCase": false,
 						"conventions": [
 							{
 								"selector": { "kind": "enum" },

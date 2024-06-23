@@ -1,5 +1,5 @@
 import { createRoute } from "@hono/zod-openapi";
-import { province_schema } from "~/db/schemas";
+import { district_schema, province_schema } from "~/db/schemas";
 import { is_admin } from "~/middleware/is-admin";
 import { is_authenticated } from "~/middleware/is-authenticated";
 import {
@@ -20,14 +20,20 @@ export const get_all_provinces = createRoute({
 	tags: ["Provinces"],
 	summary: "Get all provinces",
 	description:
-		"Returns a list of all provinces. Can return a subset of provinces by using the `limit` and `offset` query parameters.",
+		"Returns a list of all provinces.\n\nYou can also include the `districts` query parameter to include all districts in each province.",
 	request: { query: get_provinces_query_params_schema },
 	responses: {
 		200: {
 			description: "Returns a list of all provinces",
 			content: {
 				"application/json": {
-					schema: success_with_data_schema(province_schema.array()),
+					schema: success_with_data_schema(
+						province_schema
+							.extend({
+								districts: district_schema.array().optional(),
+							})
+							.array(),
+					),
 				},
 			},
 		},
