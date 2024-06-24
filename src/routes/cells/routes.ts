@@ -1,5 +1,5 @@
 import { createRoute } from "@hono/zod-openapi";
-import { cell_schema, sector_schema } from "~/db/schemas";
+import { cell_schema, village_schema } from "~/db/schemas";
 import { is_admin } from "~/middleware/is-admin";
 import { is_authenticated } from "~/middleware/is-authenticated";
 import {
@@ -8,28 +8,28 @@ import {
 	success_without_data_schema,
 } from "~/utils/responses";
 import {
-	delete_sector_request_schema,
-	get_sectors_request_schema,
-	update_sector_request_schema,
+	delete_cell_request_schema,
+	get_cells_request_schema,
+	update_cell_request_schema,
 } from "./schemas";
 
-export const get_all_sectors = createRoute({
+export const get_all_cells = createRoute({
 	method: "get",
 	path: "/",
-	tags: ["Sectors"],
-	summary: "Get all sectors",
+	tags: ["Cells"],
+	summary: "Get all cells",
 	description:
-		"Returns a list of all sectors. You can filter by `limit`, `offset`, `fields`, and `cells`.",
-	request: { query: get_sectors_request_schema.omit({ id: true }) },
+		"Returns a list of all cells. You can filter by `limit`, `offset`, `fields`, and `villages`.",
+	request: { query: get_cells_request_schema.omit({ id: true }) },
 	responses: {
 		200: {
-			description: "Returns a list of all sectors",
+			description: "Returns a list of all cells",
 			content: {
 				"application/json": {
 					schema: success_with_data_schema(
-						sector_schema
+						cell_schema
 							.extend({
-								cells: cell_schema.array().optional(),
+								villages: village_schema.array().optional(),
 							})
 							.array(),
 					),
@@ -40,17 +40,17 @@ export const get_all_sectors = createRoute({
 	},
 });
 
-export const get_single_sector = createRoute({
+export const get_single_cell = createRoute({
 	method: "get",
 	path: "/{id}",
-	tags: ["Sectors"],
-	summary: "Get a single sector",
-	description: "Returns a single sector by its `id`.",
+	tags: ["Cells"],
+	summary: "Get a single cell",
+	description: "Returns a single cell by its `id`.",
 	request: {
 		// from the request, we only need the id as a parameter
-		params: get_sectors_request_schema.pick({ id: true }),
-		// we don't need the id, limit, and offset in the query because we are getting a single sector
-		query: get_sectors_request_schema.omit({
+		params: get_cells_request_schema.pick({ id: true }),
+		// we don't need the id, limit, and offset in the query because we are getting a single cell
+		query: get_cells_request_schema.omit({
 			id: true,
 			limit: true,
 			offset: true,
@@ -58,15 +58,15 @@ export const get_single_sector = createRoute({
 	},
 	responses: {
 		200: {
-			description: "Returns a single sector",
+			description: "Returns a single cell",
 			content: {
 				"application/json": {
 					schema: success_with_data_schema(
-						sector_schema
+						cell_schema
 							.extend({
-								cells: cell_schema.array().optional(),
+								villages: village_schema.array().optional(),
 							})
-							.openapi("District"),
+							.openapi("Cell"),
 					),
 				},
 			},
@@ -75,20 +75,20 @@ export const get_single_sector = createRoute({
 	},
 });
 
-export const create_sector = createRoute({
+export const create_cell = createRoute({
 	method: "post",
 	path: "/",
 	middleware: [is_authenticated, is_admin],
-	tags: ["Sectors"],
-	summary: "Create a new sector",
+	tags: ["Cells"],
+	summary: "Create a new cell",
 	description:
-		"Creates a new sector. Requires a unique `name` and a `description`.",
+		"Creates a new cell. Requires a unique `name` and a `description`.",
 	request: {
 		body: {
 			content: {
 				"application/json": {
 					// TODO: Extend this schema to not allow empty strings.
-					schema: sector_schema.omit({
+					schema: cell_schema.omit({
 						id: true,
 						created_at: true,
 						updated_at: true,
@@ -100,26 +100,26 @@ export const create_sector = createRoute({
 	responses: {
 		201: {
 			content: { "application/json": { schema: success_without_data_schema } },
-			description: "District created.",
+			description: "Cell created.",
 		},
 		...error_responses,
 	},
 });
 
-export const update_sector = createRoute({
+export const update_cell = createRoute({
 	method: "put",
 	path: "/{id}",
 	middleware: [is_authenticated, is_admin],
-	tags: ["Sectors"],
-	summary: "Update a sector",
+	tags: ["Cells"],
+	summary: "Update a cell",
 	description:
-		"Updates a sector by its `id`. Requires a unique `name` and a `description`.",
+		"Updates a cell by its `id`. Requires a unique `name` and a `description`.",
 	request: {
-		params: update_sector_request_schema,
+		params: update_cell_request_schema,
 		body: {
 			content: {
 				"application/json": {
-					schema: sector_schema.omit({
+					schema: cell_schema.omit({
 						id: true,
 						created_at: true,
 						updated_at: true,
@@ -131,24 +131,24 @@ export const update_sector = createRoute({
 	responses: {
 		200: {
 			content: { "application/json": { schema: success_without_data_schema } },
-			description: "District updated.",
+			description: "Cell updated.",
 		},
 		...error_responses,
 	},
 });
 
-export const delete_sector = createRoute({
+export const delete_cell = createRoute({
 	method: "delete",
 	path: "/{id}",
 	middleware: [is_authenticated, is_admin],
-	tags: ["Sectors"],
-	summary: "Delete a sector",
-	description: "Deletes a sector by its `id`.",
-	request: { params: delete_sector_request_schema },
+	tags: ["Cells"],
+	summary: "Delete a cell",
+	description: "Deletes a cell by its `id`.",
+	request: { params: delete_cell_request_schema },
 	responses: {
 		200: {
 			content: { "application/json": { schema: success_without_data_schema } },
-			description: "District deleted.",
+			description: "Cell deleted.",
 		},
 		...error_responses,
 	},

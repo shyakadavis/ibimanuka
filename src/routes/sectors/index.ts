@@ -1,7 +1,7 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { eq } from "drizzle-orm";
 import { create_drizzle_client } from "~/db";
-import { provinces, sector_schema, sectors } from "~/db/schemas";
+import { districts, sector_schema, sectors } from "~/db/schemas";
 import { generate_new_id } from "~/utils/generate-id";
 import { parse_fields_to_columns } from "~/utils/requests";
 import {
@@ -105,18 +105,18 @@ sectors_routes.openapi(create_sector, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const valid_province = await db.query.provinces.findFirst({
-		where: eq(provinces.id, payload.district_id),
+	const valid_district = await db.query.districts.findFirst({
+		where: eq(districts.id, payload.district_id),
 		columns: { id: true },
 	});
 
-	if (!valid_province) {
+	if (!valid_district) {
 		return ctx.json(
 			{
 				success: false,
 				error: {
 					status: 404,
-					message: `Province '${payload.district_id}' not found`,
+					message: `District '${payload.district_id}' not found`,
 				},
 			},
 			404,

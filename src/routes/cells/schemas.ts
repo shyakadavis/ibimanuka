@@ -1,6 +1,6 @@
 import { z } from "@hono/zod-openapi";
 
-export const get_sectors_request_schema = z.object({
+export const get_cells_request_schema = z.object({
 	id: z
 		.string()
 		.min(16)
@@ -9,9 +9,9 @@ export const get_sectors_request_schema = z.object({
 			param: {
 				name: "id",
 				in: "path",
-				description: "The ID of the sector to retrieve",
+				description: "The ID of the cell to retrieve",
 			},
-			example: "sec_DEjnvJqDnPuP",
+			example: "cel_DEjnvJqDnPuP",
 		}),
 
 	limit: z
@@ -22,7 +22,7 @@ export const get_sectors_request_schema = z.object({
 			param: {
 				name: "limit",
 				in: "query",
-				description: "The number of sectors to return",
+				description: "The number of cells to return",
 			},
 			example: "10",
 		}),
@@ -35,7 +35,7 @@ export const get_sectors_request_schema = z.object({
 			param: {
 				name: "offset",
 				in: "query",
-				description: "The number of sectors to skip",
+				description: "The number of cells to skip",
 			},
 			example: "0",
 		}),
@@ -52,46 +52,46 @@ export const get_sectors_request_schema = z.object({
 			example: "name,longitude,latitude",
 		}),
 
-	cells: z
+	villages: z
 		.string()
 		.transform(Boolean)
 		.optional()
 		.openapi({
 			param: {
-				name: "cells",
+				name: "villages",
 				in: "query",
-				description: "Whether to include cells in the response",
+				description: "Whether to include villages in the response",
 			},
 			example: "true",
 		}),
 
-	cell_limit: z
+	village_limit: z
 		.string()
 		.transform(Number)
 		.optional()
 		.openapi({
 			param: {
-				name: "cell_limit",
+				name: "village_limit",
 				in: "query",
-				description: "The number of cells to return",
+				description: "The number of villages to return",
 			},
 			example: "10",
 		}),
 
-	cell_fields: z
+	village_fields: z
 		.string()
 		.optional()
 		.openapi({
 			param: {
-				name: "cell_fields",
+				name: "village_fields",
 				in: "query",
-				description: "The fields to return for cells",
+				description: "The fields to return for villages",
 			},
 			example: "name,longitude,latitude",
 		}),
 });
 
-export const update_sector_request_schema = z.object({
+export const update_cell_request_schema = z.object({
 	id: z
 		.string()
 		.min(16)
@@ -100,13 +100,13 @@ export const update_sector_request_schema = z.object({
 			param: {
 				name: "id",
 				in: "path",
-				description: "The ID of the sector to update",
+				description: "The ID of the cell to update",
 			},
-			example: "sec_DEjnvJqDnPuP",
+			example: "cel_DEjnvJqDnPuP",
 		}),
 });
 
-export const delete_sector_request_schema = z.object({
+export const delete_cell_request_schema = z.object({
 	id: z
 		.string()
 		.min(16)
@@ -115,8 +115,8 @@ export const delete_sector_request_schema = z.object({
 			param: {
 				name: "id",
 				in: "path",
-				description: "The ID of the sector to delete",
+				description: "The ID of the cell to delete",
 			},
-			example: "sec_DEjnvJqDnPuP",
+			example: "cel_DEjnvJqDnPuP",
 		}),
 });
