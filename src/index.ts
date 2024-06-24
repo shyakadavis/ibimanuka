@@ -18,7 +18,7 @@ app.doc("/docs", {
 	info: {
 		version: "1.0.0",
 		title: "🌊 IBIMANUKA API 🌊",
-		description: "Your go-to API for anything RWANDA 🇷🇼",
+		description: "An archival API for RWANDA 🇷🇼(WIP)",
 	},
 	tags: open_api_tags,
 });
