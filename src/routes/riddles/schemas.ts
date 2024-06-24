@@ -1,33 +1,6 @@
 import { z } from "@hono/zod-openapi";
 
-export const get_riddles_query_params_schema = z.object({
-	limit: z
-		.string()
-		.transform(Number)
-		.optional()
-		.openapi({
-			param: {
-				name: "limit",
-				in: "query",
-				description: "The number of riddles to return",
-			},
-			example: "10",
-		}),
-	offset: z
-		.string()
-		.transform(Number)
-		.optional()
-		.openapi({
-			param: {
-				name: "offset",
-				in: "query",
-				description: "The number of riddles to skip",
-			},
-			example: "0",
-		}),
-});
-
-export const get_single_riddle_param_schema = z.object({
+export const get_riddles_request_schema = z.object({
 	id: z
 		.string()
 		.min(16)
@@ -40,9 +13,47 @@ export const get_single_riddle_param_schema = z.object({
 			},
 			example: "rdl_FZbZjD3JJ5VQ",
 		}),
+
+	limit: z
+		.string()
+		.transform(Number)
+		.optional()
+		.openapi({
+			param: {
+				name: "limit",
+				in: "query",
+				description: "The number of riddles to return",
+			},
+			example: "10",
+		}),
+
+	offset: z
+		.string()
+		.transform(Number)
+		.optional()
+		.openapi({
+			param: {
+				name: "offset",
+				in: "query",
+				description: "The number of riddles to skip",
+			},
+			example: "0",
+		}),
+
+	fields: z
+		.string()
+		.optional()
+		.openapi({
+			param: {
+				name: "fields",
+				in: "query",
+				description: "The fields to return",
+			},
+			example: "question,answer",
+		}),
 });
 
-export const update_riddle_param_schema = z.object({
+export const update_riddle_request_schema = z.object({
 	id: z
 		.string()
 		.min(16)
@@ -57,7 +68,7 @@ export const update_riddle_param_schema = z.object({
 		}),
 });
 
-export const delete_riddle_param_schema = z.object({
+export const delete_riddle_request_schema = z.object({
 	id: z
 		.string()
 		.min(16)

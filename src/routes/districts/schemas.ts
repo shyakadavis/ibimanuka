@@ -1,18 +1,17 @@
 import { z } from "@hono/zod-openapi";
 
-export const get_districts_query_params_schema = z.object({
-	province: z
+export const get_districts_request_schema = z.object({
+	id: z
 		.string()
 		.min(16)
 		.max(16)
-		.optional()
 		.openapi({
 			param: {
-				name: "province",
-				in: "query",
-				description: "The province ID for which to return districts",
+				name: "id",
+				in: "path",
+				description: "The ID of the district to retrieve",
 			},
-			example: "prv_FjR6NJtcQvpR",
+			example: "dct_DEjnvJqDnPuP",
 		}),
 
 	limit: z
@@ -40,20 +39,55 @@ export const get_districts_query_params_schema = z.object({
 			},
 			example: "0",
 		}),
-});
 
-export const get_single_district_param_schema = z.object({
-	id: z
+	fields: z
 		.string()
-		.min(16)
-		.max(16)
+		.optional()
 		.openapi({
 			param: {
-				name: "id",
-				in: "path",
-				description: "The ID of the district to retrieve",
+				name: "fields",
+				in: "query",
+				description: "The fields to return",
 			},
-			example: "dct_DEjnvJqDnPuP",
+			example: "name,longitude,latitude",
+		}),
+
+	sectors: z
+		.string()
+		.transform(Boolean)
+		.optional()
+		.openapi({
+			param: {
+				name: "sectors",
+				in: "query",
+				description: "Whether to include sectors in the response",
+			},
+			example: "true",
+		}),
+
+	sector_limit: z
+		.string()
+		.transform(Number)
+		.optional()
+		.openapi({
+			param: {
+				name: "sector_limit",
+				in: "query",
+				description: "The number of sectors to return",
+			},
+			example: "10",
+		}),
+
+	sector_fields: z
+		.string()
+		.optional()
+		.openapi({
+			param: {
+				name: "sector_fields",
+				in: "query",
+				description: "The fields to return for sectors",
+			},
+			example: "name,longitude,latitude",
 		}),
 });
 

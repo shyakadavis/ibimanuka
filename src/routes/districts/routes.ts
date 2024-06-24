@@ -1,5 +1,5 @@
 import { createRoute } from "@hono/zod-openapi";
-import { district_schema } from "~/db/schemas";
+import { district_schema, sector_schema } from "~/db/schemas";
 import { is_admin } from "~/middleware/is-admin";
 import { is_authenticated } from "~/middleware/is-authenticated";
 import {
@@ -9,8 +9,7 @@ import {
 } from "~/utils/responses";
 import {
 	delete_district_param_schema,
-	get_districts_query_params_schema,
-	get_single_district_param_schema,
+	get_districts_request_schema,
 	update_district_param_schema,
 } from "./schemas";
 
@@ -21,13 +20,19 @@ export const get_all_districts = createRoute({
 	summary: "Get all districts",
 	description:
 		"Returns a list of all districts. You can filter by `province`, and paginate using `limit` and `offset`.",
-	request: { query: get_districts_query_params_schema },
+	request: { query: get_districts_request_schema.omit({ id: true }) },
 	responses: {
 		200: {
 			description: "Returns a list of all districts",
 			content: {
 				"application/json": {
-					schema: success_with_data_schema(district_schema.array()),
+					schema: success_with_data_schema(
+						district_schema
+							.extend({
+								sectors: sector_schema.array().optional(),
+							})
+							.array(),
+					),
 				},
 			},
 		},
@@ -41,37 +46,28 @@ export const get_single_district = createRoute({
 	tags: ["Districts"],
 	summary: "Get a single district",
 	description: "Returns a single district by its `id`.",
-	request: { params: get_single_district_param_schema },
+	request: {
+		// from the request, we only need the id as a parameter
+		params: get_districts_request_schema.pick({ id: true }),
+		// we don't need the id, limit, and offset in the query because we are getting a single district
+		query: get_districts_request_schema.omit({
+			id: true,
+			limit: true,
+			offset: true,
+		}),
+	},
 	responses: {
 		200: {
 			description: "Returns a single district",
 			content: {
 				"application/json": {
-					schema: success_with_data_schema(district_schema.openapi("District")),
-				},
-			},
-		},
-		...error_responses,
-	},
-});
-
-export const get_all_district_districts = createRoute({
-	method: "get",
-	path: "/{id}/districts",
-	tags: ["Districts"],
-	summary: "Get all districts in a district",
-	description:
-		"Returns a list of all districts in a district by its `id`. Can return a subset of districts by using the `limit` and `offset` query parameters.",
-	request: {
-		params: get_single_district_param_schema,
-		query: get_districts_query_params_schema,
-	},
-	responses: {
-		200: {
-			description: "Returns a list of all districts in a district",
-			content: {
-				"application/json": {
-					schema: success_with_data_schema(district_schema.array()),
+					schema: success_with_data_schema(
+						district_schema
+							.extend({
+								sectors: sector_schema.array().optional(),
+							})
+							.openapi("District"),
+					),
 				},
 			},
 		},

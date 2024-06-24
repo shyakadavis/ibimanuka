@@ -1,6 +1,19 @@
 import { z } from "@hono/zod-openapi";
 
-export const get_provinces_query_params_schema = z.object({
+export const get_provinces_request_schema = z.object({
+	id: z
+		.string()
+		.min(16)
+		.max(16)
+		.openapi({
+			param: {
+				name: "id",
+				in: "path",
+				description: "The ID of the province to retrieve",
+			},
+			example: "prv_DEjnvJqDnPuP",
+		}),
+
 	limit: z
 		.string()
 		.transform(Number)
@@ -78,22 +91,7 @@ export const get_provinces_query_params_schema = z.object({
 		}),
 });
 
-export const get_single_province_param_schema = z.object({
-	id: z
-		.string()
-		.min(16)
-		.max(16)
-		.openapi({
-			param: {
-				name: "id",
-				in: "path",
-				description: "The ID of the province to retrieve",
-			},
-			example: "prv_DEjnvJqDnPuP",
-		}),
-});
-
-export const update_province_param_schema = z.object({
+export const update_province_request_schema = z.object({
 	id: z
 		.string()
 		.min(16)
@@ -108,7 +106,7 @@ export const update_province_param_schema = z.object({
 		}),
 });
 
-export const delete_province_param_schema = z.object({
+export const delete_province_request_schema = z.object({
 	id: z
 		.string()
 		.min(16)

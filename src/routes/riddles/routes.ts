@@ -8,10 +8,9 @@ import {
 	success_without_data_schema,
 } from "~/utils/responses";
 import {
-	delete_riddle_param_schema,
-	get_riddles_query_params_schema,
-	get_single_riddle_param_schema,
-	update_riddle_param_schema,
+	delete_riddle_request_schema,
+	get_riddles_request_schema,
+	update_riddle_request_schema,
 } from "./schemas";
 
 export const get_all_riddles = createRoute({
@@ -21,7 +20,7 @@ export const get_all_riddles = createRoute({
 	summary: "Get all riddles",
 	description:
 		"Returns a list of all riddles. Can return a subset of riddles by using the `limit` and `offset` query parameters.",
-	request: { query: get_riddles_query_params_schema },
+	request: { query: get_riddles_request_schema.omit({ id: true }) },
 	responses: {
 		200: {
 			description: "Returns a list of all riddles",
@@ -41,7 +40,14 @@ export const get_single_riddle = createRoute({
 	tags: ["Riddles"],
 	summary: "Get a single riddle",
 	description: "Returns a single riddle by its `id`.",
-	request: { params: get_single_riddle_param_schema },
+	request: {
+		params: get_riddles_request_schema.pick({ id: true }),
+		query: get_riddles_request_schema.omit({
+			id: true,
+			limit: true,
+			offset: true,
+		}),
+	},
 	responses: {
 		200: {
 			description: "Returns a single riddle",
@@ -95,7 +101,7 @@ export const update_riddle = createRoute({
 	description:
 		"Updates a riddle by its `id`. Requires a unique `name` and a `description`.",
 	request: {
-		params: update_riddle_param_schema,
+		params: update_riddle_request_schema,
 		body: {
 			content: {
 				"application/json": {
@@ -124,7 +130,7 @@ export const delete_riddle = createRoute({
 	tags: ["Riddles"],
 	summary: "Delete a riddle",
 	description: "Deletes a riddle by its `id`.",
-	request: { params: delete_riddle_param_schema },
+	request: { params: delete_riddle_request_schema },
 	responses: {
 		200: {
 			content: { "application/json": { schema: success_without_data_schema } },

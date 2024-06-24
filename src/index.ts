@@ -22,7 +22,13 @@ app.doc("/docs", {
 	},
 	tags: open_api_tags,
 });
-app.route("/api/v1", api_routes);
+app.route("/api/v1", api_routes).onError((err, ctx) => {
+	return new_http_error({
+		ctx,
+		status: 500,
+		message: err.message,
+	});
+});
 app.notFound((ctx) => {
 	return new_http_error({
 		ctx,

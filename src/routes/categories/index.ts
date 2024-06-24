@@ -1,8 +1,9 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { eq } from "drizzle-orm";
 import { create_drizzle_client } from "~/db";
-import { categories } from "~/db/schemas";
+import { categories, category_schema } from "~/db/schemas";
 import { generate_new_id } from "~/utils/generate-id";
+import { parse_fields_to_columns } from "~/utils/requests";
 import {
 	create_category,
 	delete_category,
@@ -17,9 +18,18 @@ export const categories_routes = new OpenAPIHono<{
 }>();
 
 categories_routes.openapi(get_all_categories, async (ctx) => {
-	const { limit, offset } = ctx.req.valid("query");
+	const { limit, offset, fields } = ctx.req.valid("query");
+
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
-	const data = await db.query.categories.findMany({ limit, offset });
+
+	const data = await db.query.categories.findMany({
+		limit,
+		offset,
+		columns: fields
+			? parse_fields_to_columns(category_schema, fields)
+			: undefined,
+	});
+
 	return ctx.json(
 		{
 			success: true,
@@ -32,10 +42,17 @@ categories_routes.openapi(get_all_categories, async (ctx) => {
 
 categories_routes.openapi(get_single_category, async (ctx) => {
 	const { id } = ctx.req.valid("param");
+	const { fields } = ctx.req.valid("query");
+
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
+
 	const data = await db.query.categories.findFirst({
 		where: eq(categories.id, id),
+		columns: fields
+			? parse_fields_to_columns(category_schema, fields)
+			: undefined,
 	});
+
 	if (!data) {
 		return ctx.json(
 			{
@@ -48,6 +65,7 @@ categories_routes.openapi(get_single_category, async (ctx) => {
 			404,
 		);
 	}
+
 	return ctx.json(
 		{
 			success: true,
@@ -60,11 +78,14 @@ categories_routes.openapi(get_single_category, async (ctx) => {
 
 categories_routes.openapi(create_category, async (ctx) => {
 	const { name, description } = ctx.req.valid("json");
+
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
+
 	const existing_category = await db.query.categories.findFirst({
 		where: eq(categories.name, name),
 		columns: { name: true },
 	});
+
 	if (existing_category) {
 		return ctx.json(
 			{
@@ -77,11 +98,13 @@ categories_routes.openapi(create_category, async (ctx) => {
 			400,
 		);
 	}
+
 	const data = await db.insert(categories).values({
 		id: generate_new_id("category"),
 		name,
 		description,
 	});
+
 	if (data.rowCount === 0) {
 		return ctx.json(
 			{
@@ -94,6 +117,7 @@ categories_routes.openapi(create_category, async (ctx) => {
 			500,
 		);
 	}
+
 	return ctx.json(
 		{
 			success: true,
@@ -106,11 +130,14 @@ categories_routes.openapi(create_category, async (ctx) => {
 categories_routes.openapi(update_category, async (ctx) => {
 	const { id } = ctx.req.valid("param");
 	const { name, description } = ctx.req.valid("json");
+
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
+
 	const existing_category = await db.query.categories.findFirst({
 		where: eq(categories.id, id),
 		columns: { id: true, name: true },
 	});
+
 	if (!existing_category) {
 		return ctx.json(
 			{
@@ -123,6 +150,7 @@ categories_routes.openapi(update_category, async (ctx) => {
 			404,
 		);
 	}
+
 	if (existing_category.name !== name) {
 		const duplicate_category = await db.query.categories.findFirst({
 			where: eq(categories.name, name),
@@ -141,6 +169,7 @@ categories_routes.openapi(update_category, async (ctx) => {
 			);
 		}
 	}
+
 	const data = await db
 		.update(categories)
 		.set({
@@ -160,6 +189,7 @@ categories_routes.openapi(update_category, async (ctx) => {
 			500,
 		);
 	}
+
 	return ctx.json(
 		{
 			success: true,
@@ -171,11 +201,14 @@ categories_routes.openapi(update_category, async (ctx) => {
 
 categories_routes.openapi(delete_category, async (ctx) => {
 	const { id } = ctx.req.valid("param");
+
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
+
 	const existing_category = await db.query.categories.findFirst({
 		where: eq(categories.id, id),
 		columns: { id: true },
 	});
+
 	if (!existing_category) {
 		return ctx.json(
 			{
@@ -188,6 +221,7 @@ categories_routes.openapi(delete_category, async (ctx) => {
 			404,
 		);
 	}
+
 	const data = await db.delete(categories).where(eq(categories.id, id));
 	if (data.rowCount === 0) {
 		return ctx.json(
@@ -201,6 +235,7 @@ categories_routes.openapi(delete_category, async (ctx) => {
 			500,
 		);
 	}
+
 	return ctx.json(
 		{
 			success: true,

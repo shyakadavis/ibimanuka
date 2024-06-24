@@ -1,8 +1,9 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { eq } from "drizzle-orm";
 import { create_drizzle_client } from "~/db";
-import { districts, provinces } from "~/db/schemas";
+import { district_schema, districts, provinces } from "~/db/schemas";
 import { generate_new_id } from "~/utils/generate-id";
+import { parse_fields_to_columns } from "~/utils/requests";
 import {
 	create_district,
 	delete_district,
@@ -17,46 +18,30 @@ export const districts_routes = new OpenAPIHono<{
 }>();
 
 districts_routes.openapi(get_all_districts, async (ctx) => {
-	const { province, limit, offset } = ctx.req.valid("query");
+	const { limit, offset, fields, sectors, sector_limit, sector_fields } =
+		ctx.req.valid("query");
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	if (province) {
-		// TODO: Keep looking into this - it's working-ish and looks promising
-		// const data = await db.query.provinces.findFirst({
-		//   where: eq(provinces.id, province),
-		//   with: {
-		//     districts: {
-		//       columns: {
-		//         name: true,
-		//       },
-		//       with: {
-		//         sectors: {
-		//           columns: {
-		//             name: true,
-		//             district_id: true,
-		//           },
-		//         },
-		//       },
-		//     },
-		//   },
-		// });
-		const data = await db.query.districts.findMany({
-			where: eq(districts.province_id, province),
-			limit,
-			offset,
-		});
-		return ctx.json(
-			{
-				success: true,
-				message: `Returned ${data.length} districts`,
-				data,
-			},
-			200,
-		);
-	}
-
-	const data = await db.query.districts.findMany({ limit, offset });
+	const data = await db.query.districts.findMany({
+		limit,
+		offset,
+		columns: fields
+			? parse_fields_to_columns(district_schema, fields)
+			: undefined,
+		with: sectors
+			? {
+					sectors: {
+						limit: sector_limit,
+						columns: sector_fields
+							? parse_fields_to_columns(district_schema, sector_fields)
+							: undefined,
+						// TODO: Decide if we want to recursively handle queries for cells, and villages
+						// with: { cells: true },
+					},
+				}
+			: undefined,
+	});
 
 	return ctx.json(
 		{
@@ -70,10 +55,27 @@ districts_routes.openapi(get_all_districts, async (ctx) => {
 
 districts_routes.openapi(get_single_district, async (ctx) => {
 	const { id } = ctx.req.valid("param");
+	const { fields, sector_fields, sector_limit, sectors } =
+		ctx.req.valid("query");
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
 	const data = await db.query.districts.findFirst({
+		columns: fields
+			? parse_fields_to_columns(district_schema, fields)
+			: undefined,
+		with: sectors
+			? {
+					sectors: {
+						limit: sector_limit,
+						columns: sector_fields
+							? parse_fields_to_columns(district_schema, sector_fields)
+							: undefined,
+						// TODO: Decide if we want to recursively handle queries for cells, and villages
+						// with: { cells: true },
+					},
+				}
+			: undefined,
 		where: eq(districts.id, id),
 	});
 
