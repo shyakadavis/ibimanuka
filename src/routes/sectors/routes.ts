@@ -63,10 +63,11 @@ export const get_single_sector = createRoute({
 				"application/json": {
 					schema: success_with_data_schema(
 						sector_schema
+							// this will create a model for the sector object in the openapi documentation
+							.openapi("Sector")
 							.extend({
 								cells: cell_schema.array().optional(),
-							})
-							.openapi("District"),
+							}),
 					),
 				},
 			},

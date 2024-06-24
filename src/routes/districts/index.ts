@@ -174,6 +174,24 @@ districts_routes.openapi(update_district, async (ctx) => {
 		);
 	}
 
+	const valid_province = await db.query.provinces.findFirst({
+		where: eq(provinces.id, payload.province_id),
+		columns: { id: true },
+	});
+
+	if (!valid_province) {
+		return ctx.json(
+			{
+				success: false,
+				error: {
+					status: 404,
+					message: `Province '${payload.province_id}' not found`,
+				},
+			},
+			404,
+		);
+	}
+
 	const data = await db
 		.update(districts)
 		.set(payload)

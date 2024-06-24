@@ -46,7 +46,7 @@ provinces_routes.openapi(get_all_provinces, async (ctx) => {
 	return ctx.json(
 		{
 			success: true,
-			message: "Successfully returned provinces",
+			message: `Returned ${data.length} provinces`,
 			data,
 		},
 		200,
@@ -55,10 +55,28 @@ provinces_routes.openapi(get_all_provinces, async (ctx) => {
 
 provinces_routes.openapi(get_single_province, async (ctx) => {
 	const { id } = ctx.req.valid("param");
+	const { fields, districts, district_fields, district_limit } =
+		ctx.req.valid("query");
+
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
+
 	const data = await db.query.provinces.findFirst({
 		where: eq(provinces.id, id),
+		columns: fields
+			? parse_fields_to_columns(province_schema, fields)
+			: undefined,
+		with: districts
+			? {
+					districts: {
+						limit: district_limit,
+						columns: district_fields
+							? parse_fields_to_columns(district_schema, district_fields)
+							: undefined,
+					},
+				}
+			: undefined,
 	});
+
 	if (!data) {
 		return ctx.json(
 			{
@@ -71,6 +89,7 @@ provinces_routes.openapi(get_single_province, async (ctx) => {
 			404,
 		);
 	}
+
 	return ctx.json(
 		{
 			success: true,
@@ -83,11 +102,14 @@ provinces_routes.openapi(get_single_province, async (ctx) => {
 
 provinces_routes.openapi(create_province, async (ctx) => {
 	const { name, description, latitude, longitude } = ctx.req.valid("json");
+
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
+
 	const existing_province = await db.query.provinces.findFirst({
 		where: eq(provinces.name, name),
 		columns: { name: true },
 	});
+
 	if (existing_province) {
 		return ctx.json(
 			{
@@ -100,6 +122,7 @@ provinces_routes.openapi(create_province, async (ctx) => {
 			400,
 		);
 	}
+
 	const data = await db.insert(provinces).values({
 		id: generate_new_id("province"),
 		name,
@@ -107,6 +130,7 @@ provinces_routes.openapi(create_province, async (ctx) => {
 		latitude,
 		longitude,
 	});
+
 	if (data.rowCount === 0) {
 		return ctx.json(
 			{
@@ -119,6 +143,7 @@ provinces_routes.openapi(create_province, async (ctx) => {
 			500,
 		);
 	}
+
 	return ctx.json(
 		{
 			success: true,
@@ -131,11 +156,14 @@ provinces_routes.openapi(create_province, async (ctx) => {
 provinces_routes.openapi(update_province, async (ctx) => {
 	const { id } = ctx.req.valid("param");
 	const { name, description } = ctx.req.valid("json");
+
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
+
 	const existing_province = await db.query.provinces.findFirst({
 		where: eq(provinces.id, id),
 		columns: { id: true, name: true },
 	});
+
 	if (!existing_province) {
 		return ctx.json(
 			{
@@ -148,6 +176,7 @@ provinces_routes.openapi(update_province, async (ctx) => {
 			404,
 		);
 	}
+
 	if (existing_province.name !== name) {
 		const duplicate_province = await db.query.provinces.findFirst({
 			where: eq(provinces.name, name),
@@ -166,6 +195,7 @@ provinces_routes.openapi(update_province, async (ctx) => {
 			);
 		}
 	}
+
 	const data = await db
 		.update(provinces)
 		.set({
@@ -185,6 +215,7 @@ provinces_routes.openapi(update_province, async (ctx) => {
 			500,
 		);
 	}
+
 	return ctx.json(
 		{
 			success: true,
@@ -196,11 +227,14 @@ provinces_routes.openapi(update_province, async (ctx) => {
 
 provinces_routes.openapi(delete_province, async (ctx) => {
 	const { id } = ctx.req.valid("param");
+
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
+
 	const existing_province = await db.query.provinces.findFirst({
 		where: eq(provinces.id, id),
 		columns: { id: true },
 	});
+
 	if (!existing_province) {
 		return ctx.json(
 			{
@@ -213,6 +247,7 @@ provinces_routes.openapi(delete_province, async (ctx) => {
 			404,
 		);
 	}
+
 	const data = await db.delete(provinces).where(eq(provinces.id, id));
 	if (data.rowCount === 0) {
 		return ctx.json(
@@ -226,6 +261,7 @@ provinces_routes.openapi(delete_province, async (ctx) => {
 			500,
 		);
 	}
+
 	return ctx.json(
 		{
 			success: true,

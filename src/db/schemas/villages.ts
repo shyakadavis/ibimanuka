@@ -19,7 +19,7 @@ export const villages = pgTable(
 		id: varchar("id", { length: 16 }).primaryKey().notNull(),
 		name: varchar("name", { length: 16 }).notNull().unique(),
 		description: varchar("description", { length: 256 }).notNull(),
-		sector_id: varchar("sector_id", { length: 16 })
+		cell_id: varchar("cell_id", { length: 16 })
 			.notNull()
 			.references(() => cells.id, { onDelete: "cascade" }),
 		latitude: doublePrecision("latitude"),
@@ -41,7 +41,7 @@ export const village_schema = createInsertSchema(villages);
 
 export const villages_relations = relations(villages, ({ one }) => ({
 	cell: one(cells, {
-		fields: [villages.sector_id],
+		fields: [villages.cell_id],
 		references: [cells.id],
 	}),
 }));

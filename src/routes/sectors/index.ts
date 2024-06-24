@@ -84,7 +84,7 @@ sectors_routes.openapi(get_single_sector, async (ctx) => {
 				success: false,
 				error: {
 					status: 404,
-					message: `District with id '${id}' not found`,
+					message: `Sector with id '${id}' not found`,
 				},
 			},
 			404,
@@ -116,7 +116,7 @@ sectors_routes.openapi(create_sector, async (ctx) => {
 				success: false,
 				error: {
 					status: 404,
-					message: `District '${payload.district_id}' not found`,
+					message: `Sector '${payload.district_id}' not found`,
 				},
 			},
 			404,
@@ -133,7 +133,7 @@ sectors_routes.openapi(create_sector, async (ctx) => {
 				success: false,
 				error: {
 					status: 500,
-					message: "District not created",
+					message: "Sector not created",
 				},
 			},
 			500,
@@ -143,7 +143,7 @@ sectors_routes.openapi(create_sector, async (ctx) => {
 	return ctx.json(
 		{
 			success: true,
-			message: "District created successfully",
+			message: "Sector created successfully",
 		},
 		201,
 	);
@@ -166,7 +166,25 @@ sectors_routes.openapi(update_sector, async (ctx) => {
 				success: false,
 				error: {
 					status: 404,
-					message: `District '${id}' not found`,
+					message: `Sector '${id}' not found`,
+				},
+			},
+			404,
+		);
+	}
+
+	const valid_district = await db.query.districts.findFirst({
+		where: eq(districts.id, payload.district_id),
+		columns: { id: true },
+	});
+
+	if (!valid_district) {
+		return ctx.json(
+			{
+				success: false,
+				error: {
+					status: 404,
+					message: `District '${payload.district_id}' not found`,
 				},
 			},
 			404,
@@ -181,7 +199,7 @@ sectors_routes.openapi(update_sector, async (ctx) => {
 				success: false,
 				error: {
 					status: 500,
-					message: "District not updated",
+					message: "Sector not updated",
 				},
 			},
 			500,
@@ -191,7 +209,7 @@ sectors_routes.openapi(update_sector, async (ctx) => {
 	return ctx.json(
 		{
 			success: true,
-			message: "District updated successfully",
+			message: "Sector updated successfully",
 		},
 		200,
 	);
@@ -199,7 +217,9 @@ sectors_routes.openapi(update_sector, async (ctx) => {
 
 sectors_routes.openapi(delete_sector, async (ctx) => {
 	const { id } = ctx.req.valid("param");
+
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
+
 	const existing_sector = await db.query.sectors.findFirst({
 		where: eq(sectors.id, id),
 		columns: { id: true },
@@ -211,7 +231,7 @@ sectors_routes.openapi(delete_sector, async (ctx) => {
 				success: false,
 				error: {
 					status: 404,
-					message: `District '${id}' not found`,
+					message: `Sector '${id}' not found`,
 				},
 			},
 			404,
@@ -226,7 +246,7 @@ sectors_routes.openapi(delete_sector, async (ctx) => {
 				success: false,
 				error: {
 					status: 500,
-					message: "District not deleted",
+					message: "Sector not deleted",
 				},
 			},
 			500,
@@ -236,7 +256,7 @@ sectors_routes.openapi(delete_sector, async (ctx) => {
 	return ctx.json(
 		{
 			success: true,
-			message: "District deleted successfully",
+			message: "Sector deleted successfully",
 		},
 		200,
 	);

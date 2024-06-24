@@ -170,6 +170,24 @@ cells_routes.openapi(update_cell, async (ctx) => {
 		);
 	}
 
+	const valid_sector = await db.query.sectors.findFirst({
+		where: eq(sectors.id, payload.sector_id),
+		columns: { id: true },
+	});
+
+	if (!valid_sector) {
+		return ctx.json(
+			{
+				success: false,
+				error: {
+					status: 404,
+					message: `Sector '${payload.sector_id}' not found`,
+				},
+			},
+			404,
+		);
+	}
+
 	const data = await db.update(cells).set(payload).where(eq(cells.id, id));
 
 	if (data.rowCount === 0) {

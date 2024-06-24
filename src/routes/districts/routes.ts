@@ -62,11 +62,9 @@ export const get_single_district = createRoute({
 			content: {
 				"application/json": {
 					schema: success_with_data_schema(
-						district_schema
-							.extend({
-								sectors: sector_schema.array().optional(),
-							})
-							.openapi("District"),
+						district_schema.openapi("District").extend({
+							sectors: sector_schema.array().optional(),
+						}),
 					),
 				},
 			},

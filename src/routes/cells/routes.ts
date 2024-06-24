@@ -62,11 +62,9 @@ export const get_single_cell = createRoute({
 			content: {
 				"application/json": {
 					schema: success_with_data_schema(
-						cell_schema
-							.extend({
-								villages: village_schema.array().optional(),
-							})
-							.openapi("Cell"),
+						cell_schema.openapi("Cell").extend({
+							villages: village_schema.array().optional(),
+						}),
 					),
 				},
 			},
