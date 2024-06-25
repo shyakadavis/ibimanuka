@@ -13,8 +13,7 @@
 		"check:types": "tsc --noEmit --pretty",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
-		"db:studio": "drizzle-kit studio",
-		"changeset": "bun x changeset"
+		"db:studio": "drizzle-kit studio"
 	},
 	"dependencies": {
 		"@hono/zod-openapi": "^0.14.5",
@@ -30,7 +29,6 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.8.1",
-		"@changesets/cli": "^2.27.6",
 		"@cloudflare/workers-types": "^4.20240529.0",
 		"dotenv": "^16.4.5",
 		"drizzle-kit": "^0.22.7",
