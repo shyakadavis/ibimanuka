@@ -5,7 +5,7 @@
 		"url": "https://shyakadavis.me/",
 		"email": "hey@shyakadavis.me"
 	},
-	"version": "0.2.0",
+	"version": "0.0.0",
 	"scripts": {
 		"dev": "wrangler dev src/index.ts",
 		"worker:deploy": "wrangler deploy --minify src/index.ts",
