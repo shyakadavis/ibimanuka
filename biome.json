@@ -10,7 +10,10 @@
 		"enabled": true,
 		"rules": {
 			"recommended": true,
-			"correctness": { "noUnusedImports": { "level": "warn", "fix": "safe" } },
+			"correctness": {
+				"noUnusedImports": { "level": "warn", "fix": "safe" },
+				"noUnusedVariables": { "level": "warn", "fix": "safe" }
+			},
 			"style": {
 				"useImportType": { "level": "warn", "fix": "safe" },
 				"noUnusedTemplateLiteral": { "level": "warn", "fix": "safe" },
@@ -18,6 +21,7 @@
 					"level": "error",
 					"options": {
 						"requireAscii": true,
+						"strictCase": false,
 						"conventions": [
 							{
 								"selector": { "kind": "enum" },

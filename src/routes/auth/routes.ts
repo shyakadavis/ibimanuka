@@ -1,5 +1,5 @@
 import { createRoute, z } from "@hono/zod-openapi";
-import { user_schema } from "~/db/schema";
+import { user_schema } from "~/db/schemas";
 import { check_if_already_logged_in } from "~/middleware/is-already-logged-in";
 import { is_authenticated } from "~/middleware/is-authenticated";
 import {

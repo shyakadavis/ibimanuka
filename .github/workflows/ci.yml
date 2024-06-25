@@ -8,11 +8,27 @@ on:
 
 jobs:
   Check:
-    name: Format & Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v1
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      # run any `bun` or `bun x` command
-      - run: bun check
+      - name: Install bun
+        uses: oven-sh/setup-bun@v1
+
+      - name: Setup bun cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-${{ matrix.bun }}-bun-${{ hashFiles('**/bun.lockb') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.bun }}-bun-
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Check
+        run: bun check
+
+      - name: Check types
+        run: bun check:types

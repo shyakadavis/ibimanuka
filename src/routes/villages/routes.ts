@@ -1,5 +1,5 @@
 import { createRoute } from "@hono/zod-openapi";
-import { riddle_schema } from "~/db/schemas";
+import { village_schema } from "~/db/schemas";
 import { is_admin } from "~/middleware/is-admin";
 import { is_authenticated } from "~/middleware/is-authenticated";
 import {
@@ -8,25 +8,25 @@ import {
 	success_without_data_schema,
 } from "~/utils/responses";
 import {
-	delete_riddle_request_schema,
-	get_riddles_request_schema,
-	update_riddle_request_schema,
+	delete_village_request_schema,
+	get_villages_request_schema,
+	update_village_request_schema,
 } from "./schemas";
 
-export const get_all_riddles = createRoute({
+export const get_all_villages = createRoute({
 	method: "get",
 	path: "/",
-	tags: ["Riddles"],
-	summary: "Get all riddles",
+	tags: ["Villages"],
+	summary: "Get all villages",
 	description:
-		"Returns a list of all riddles. Can return a subset of riddles by using the `limit` and `offset` query parameters.",
-	request: { query: get_riddles_request_schema.omit({ id: true }) },
+		"Returns a list of all villages. Can be paginated using `limit` and `offset`.",
+	request: { query: get_villages_request_schema.omit({ id: true }) },
 	responses: {
 		200: {
-			description: "Returns a list of all riddles",
+			description: "Returns a list of all villages",
 			content: {
 				"application/json": {
-					schema: success_with_data_schema(riddle_schema.array()),
+					schema: success_with_data_schema(village_schema.array()),
 				},
 			},
 		},
@@ -34,15 +34,15 @@ export const get_all_riddles = createRoute({
 	},
 });
 
-export const get_single_riddle = createRoute({
+export const get_single_village = createRoute({
 	method: "get",
 	path: "/{id}",
-	tags: ["Riddles"],
-	summary: "Get a single riddle",
-	description: "Returns a single riddle by its `id`.",
+	tags: ["Villages"],
+	summary: "Get a single village",
+	description: "Returns a single village by its `id`.",
 	request: {
-		params: get_riddles_request_schema.pick({ id: true }),
-		query: get_riddles_request_schema.omit({
+		params: get_villages_request_schema.pick({ id: true }),
+		query: get_villages_request_schema.omit({
 			id: true,
 			limit: true,
 			offset: true,
@@ -50,10 +50,10 @@ export const get_single_riddle = createRoute({
 	},
 	responses: {
 		200: {
-			description: "Returns a single riddle",
+			description: "Returns a single village",
 			content: {
 				"application/json": {
-					schema: success_with_data_schema(riddle_schema.openapi("Riddle")),
+					schema: success_with_data_schema(village_schema.openapi("Village")),
 				},
 			},
 		},
@@ -61,20 +61,20 @@ export const get_single_riddle = createRoute({
 	},
 });
 
-export const create_riddle = createRoute({
+export const create_village = createRoute({
 	method: "post",
 	path: "/",
 	middleware: [is_authenticated, is_admin],
-	tags: ["Riddles"],
-	summary: "Create a new riddle",
+	tags: ["Villages"],
+	summary: "Create a new village",
 	description:
-		"Creates a new riddle. Requires a unique `name` and a `description`.",
+		"Creates a new village. Requires a unique `name` and a `description`.",
 	request: {
 		body: {
 			content: {
 				"application/json": {
 					// TODO: Extend this schema to not allow empty strings.
-					schema: riddle_schema.omit({
+					schema: village_schema.omit({
 						id: true,
 						created_at: true,
 						updated_at: true,
@@ -86,26 +86,26 @@ export const create_riddle = createRoute({
 	responses: {
 		201: {
 			content: { "application/json": { schema: success_without_data_schema } },
-			description: "Riddle created.",
+			description: "Village created.",
 		},
 		...error_responses,
 	},
 });
 
-export const update_riddle = createRoute({
+export const update_village = createRoute({
 	method: "put",
 	path: "/{id}",
 	middleware: [is_authenticated, is_admin],
-	tags: ["Riddles"],
-	summary: "Update a riddle",
+	tags: ["Villages"],
+	summary: "Update a village",
 	description:
-		"Updates a riddle by its `id`. Requires a unique `name` and a `description`.",
+		"Updates a village by its `id`. Requires a unique `name` and a `description`.",
 	request: {
-		params: update_riddle_request_schema,
+		params: update_village_request_schema,
 		body: {
 			content: {
 				"application/json": {
-					schema: riddle_schema.omit({
+					schema: village_schema.omit({
 						id: true,
 						created_at: true,
 						updated_at: true,
@@ -117,24 +117,24 @@ export const update_riddle = createRoute({
 	responses: {
 		200: {
 			content: { "application/json": { schema: success_without_data_schema } },
-			description: "Riddle updated.",
+			description: "Village updated.",
 		},
 		...error_responses,
 	},
 });
 
-export const delete_riddle = createRoute({
+export const delete_village = createRoute({
 	method: "delete",
 	path: "/{id}",
 	middleware: [is_authenticated, is_admin],
-	tags: ["Riddles"],
-	summary: "Delete a riddle",
-	description: "Deletes a riddle by its `id`.",
-	request: { params: delete_riddle_request_schema },
+	tags: ["Villages"],
+	summary: "Delete a village",
+	description: "Deletes a village by its `id`.",
+	request: { params: delete_village_request_schema },
 	responses: {
 		200: {
 			content: { "application/json": { schema: success_without_data_schema } },
-			description: "Riddle deleted.",
+			description: "Village deleted.",
 		},
 		...error_responses,
 	},

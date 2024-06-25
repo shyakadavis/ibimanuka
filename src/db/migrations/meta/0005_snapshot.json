@@ -1,0 +1,806 @@
+{
+	"id": "eb86b3bd-c5c0-4676-8b4c-15ec20b9b4c5",
+	"prevId": "c0ae19f7-8c0f-4552-9f31-586b976d2b0f",
+	"version": "7",
+	"dialect": "postgresql",
+	"tables": {
+		"public.categories": {
+			"name": "categories",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "varchar(16)",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"name": {
+					"name": "name",
+					"type": "varchar(16)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"description": {
+					"name": "description",
+					"type": "varchar(256)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				},
+				"updated_at": {
+					"name": "updated_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				}
+			},
+			"indexes": {
+				"categories_name_index": {
+					"name": "categories_name_index",
+					"columns": [
+						{
+							"expression": "name",
+							"isExpression": false,
+							"asc": true,
+							"nulls": "last"
+						}
+					],
+					"isUnique": false,
+					"concurrently": false,
+					"method": "btree",
+					"with": {}
+				}
+			},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {
+				"categories_name_unique": {
+					"name": "categories_name_unique",
+					"nullsNotDistinct": false,
+					"columns": ["name"]
+				}
+			}
+		},
+		"public.cells": {
+			"name": "cells",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "varchar(16)",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"name": {
+					"name": "name",
+					"type": "varchar(16)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"description": {
+					"name": "description",
+					"type": "varchar(256)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"sector_id": {
+					"name": "sector_id",
+					"type": "varchar(16)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"latitude": {
+					"name": "latitude",
+					"type": "double precision",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"longitude": {
+					"name": "longitude",
+					"type": "double precision",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				},
+				"updated_at": {
+					"name": "updated_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				}
+			},
+			"indexes": {
+				"cells_name_index": {
+					"name": "cells_name_index",
+					"columns": [
+						{
+							"expression": "name",
+							"isExpression": false,
+							"asc": true,
+							"nulls": "last"
+						}
+					],
+					"isUnique": false,
+					"concurrently": false,
+					"method": "btree",
+					"with": {}
+				}
+			},
+			"foreignKeys": {
+				"cells_sector_id_sectors_id_fk": {
+					"name": "cells_sector_id_sectors_id_fk",
+					"tableFrom": "cells",
+					"tableTo": "sectors",
+					"columnsFrom": ["sector_id"],
+					"columnsTo": ["id"],
+					"onDelete": "cascade",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {
+				"cells_name_unique": {
+					"name": "cells_name_unique",
+					"nullsNotDistinct": false,
+					"columns": ["name"]
+				}
+			}
+		},
+		"public.districts": {
+			"name": "districts",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "varchar(16)",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"name": {
+					"name": "name",
+					"type": "varchar(16)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"description": {
+					"name": "description",
+					"type": "varchar(256)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"province_id": {
+					"name": "province_id",
+					"type": "varchar(16)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"latitude": {
+					"name": "latitude",
+					"type": "double precision",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"longitude": {
+					"name": "longitude",
+					"type": "double precision",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				},
+				"updated_at": {
+					"name": "updated_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				}
+			},
+			"indexes": {
+				"districts_name_index": {
+					"name": "districts_name_index",
+					"columns": [
+						{
+							"expression": "name",
+							"isExpression": false,
+							"asc": true,
+							"nulls": "last"
+						}
+					],
+					"isUnique": false,
+					"concurrently": false,
+					"method": "btree",
+					"with": {}
+				}
+			},
+			"foreignKeys": {
+				"districts_province_id_provinces_id_fk": {
+					"name": "districts_province_id_provinces_id_fk",
+					"tableFrom": "districts",
+					"tableTo": "provinces",
+					"columnsFrom": ["province_id"],
+					"columnsTo": ["id"],
+					"onDelete": "cascade",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {
+				"districts_name_unique": {
+					"name": "districts_name_unique",
+					"nullsNotDistinct": false,
+					"columns": ["name"]
+				}
+			}
+		},
+		"public.provinces": {
+			"name": "provinces",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "varchar(16)",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"name": {
+					"name": "name",
+					"type": "varchar(16)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"description": {
+					"name": "description",
+					"type": "varchar(256)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"latitude": {
+					"name": "latitude",
+					"type": "double precision",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"longitude": {
+					"name": "longitude",
+					"type": "double precision",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				},
+				"updated_at": {
+					"name": "updated_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				}
+			},
+			"indexes": {
+				"provinces_name_index": {
+					"name": "provinces_name_index",
+					"columns": [
+						{
+							"expression": "name",
+							"isExpression": false,
+							"asc": true,
+							"nulls": "last"
+						}
+					],
+					"isUnique": false,
+					"concurrently": false,
+					"method": "btree",
+					"with": {}
+				}
+			},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {
+				"provinces_name_unique": {
+					"name": "provinces_name_unique",
+					"nullsNotDistinct": false,
+					"columns": ["name"]
+				}
+			}
+		},
+		"public.riddles": {
+			"name": "riddles",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "varchar(16)",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"question": {
+					"name": "question",
+					"type": "varchar(256)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"answer": {
+					"name": "answer",
+					"type": "varchar(16)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"categories": {
+					"name": "categories",
+					"type": "varchar(16)[]",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"hints": {
+					"name": "hints",
+					"type": "varchar(256)[]",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"complexity_level": {
+					"name": "complexity_level",
+					"type": "complexity_level",
+					"typeSchema": "public",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				},
+				"updated_at": {
+					"name": "updated_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				}
+			},
+			"indexes": {
+				"riddles_question_index": {
+					"name": "riddles_question_index",
+					"columns": [
+						{
+							"expression": "question",
+							"isExpression": false,
+							"asc": true,
+							"nulls": "last"
+						}
+					],
+					"isUnique": false,
+					"concurrently": false,
+					"method": "btree",
+					"with": {}
+				},
+				"riddles_answer_index": {
+					"name": "riddles_answer_index",
+					"columns": [
+						{
+							"expression": "answer",
+							"isExpression": false,
+							"asc": true,
+							"nulls": "last"
+						}
+					],
+					"isUnique": false,
+					"concurrently": false,
+					"method": "btree",
+					"with": {}
+				},
+				"riddles_categories_index": {
+					"name": "riddles_categories_index",
+					"columns": [
+						{
+							"expression": "categories",
+							"isExpression": false,
+							"asc": true,
+							"nulls": "last"
+						}
+					],
+					"isUnique": false,
+					"concurrently": false,
+					"method": "btree",
+					"with": {}
+				}
+			},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {}
+		},
+		"public.sectors": {
+			"name": "sectors",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "varchar(16)",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"name": {
+					"name": "name",
+					"type": "varchar(16)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"description": {
+					"name": "description",
+					"type": "varchar(256)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"district_id": {
+					"name": "district_id",
+					"type": "varchar(16)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"latitude": {
+					"name": "latitude",
+					"type": "double precision",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"longitude": {
+					"name": "longitude",
+					"type": "double precision",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				},
+				"updated_at": {
+					"name": "updated_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				}
+			},
+			"indexes": {
+				"sectors_name_index": {
+					"name": "sectors_name_index",
+					"columns": [
+						{
+							"expression": "name",
+							"isExpression": false,
+							"asc": true,
+							"nulls": "last"
+						}
+					],
+					"isUnique": false,
+					"concurrently": false,
+					"method": "btree",
+					"with": {}
+				}
+			},
+			"foreignKeys": {
+				"sectors_district_id_districts_id_fk": {
+					"name": "sectors_district_id_districts_id_fk",
+					"tableFrom": "sectors",
+					"tableTo": "districts",
+					"columnsFrom": ["district_id"],
+					"columnsTo": ["id"],
+					"onDelete": "cascade",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {
+				"sectors_name_unique": {
+					"name": "sectors_name_unique",
+					"nullsNotDistinct": false,
+					"columns": ["name"]
+				}
+			}
+		},
+		"public.sessions": {
+			"name": "sessions",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "varchar",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"user_id": {
+					"name": "user_id",
+					"type": "varchar",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				},
+				"expires_at": {
+					"name": "expires_at",
+					"type": "timestamp with time zone",
+					"primaryKey": false,
+					"notNull": true
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"sessions_user_id_users_id_fk": {
+					"name": "sessions_user_id_users_id_fk",
+					"tableFrom": "sessions",
+					"tableTo": "users",
+					"columnsFrom": ["user_id"],
+					"columnsTo": ["id"],
+					"onDelete": "cascade",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {}
+		},
+		"public.users": {
+			"name": "users",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "varchar(16)",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"name": {
+					"name": "name",
+					"type": "varchar(64)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"given_name": {
+					"name": "given_name",
+					"type": "varchar(64)",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"surname": {
+					"name": "surname",
+					"type": "varchar(64)",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"email": {
+					"name": "email",
+					"type": "varchar(256)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"email_verified": {
+					"name": "email_verified",
+					"type": "boolean",
+					"primaryKey": false,
+					"notNull": true,
+					"default": false
+				},
+				"hashed_password": {
+					"name": "hashed_password",
+					"type": "varchar",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"role": {
+					"name": "role",
+					"type": "role",
+					"typeSchema": "public",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "'USER'"
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				},
+				"updated_at": {
+					"name": "updated_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				}
+			},
+			"indexes": {
+				"users_email_index": {
+					"name": "users_email_index",
+					"columns": [
+						{
+							"expression": "email",
+							"isExpression": false,
+							"asc": true,
+							"nulls": "last"
+						}
+					],
+					"isUnique": false,
+					"concurrently": false,
+					"method": "btree",
+					"with": {}
+				},
+				"users_name_index": {
+					"name": "users_name_index",
+					"columns": [
+						{
+							"expression": "name",
+							"isExpression": false,
+							"asc": true,
+							"nulls": "last"
+						}
+					],
+					"isUnique": false,
+					"concurrently": false,
+					"method": "btree",
+					"with": {}
+				}
+			},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {
+				"users_email_unique": {
+					"name": "users_email_unique",
+					"nullsNotDistinct": false,
+					"columns": ["email"]
+				}
+			}
+		},
+		"public.villages": {
+			"name": "villages",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "varchar(16)",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"name": {
+					"name": "name",
+					"type": "varchar(16)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"description": {
+					"name": "description",
+					"type": "varchar(256)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"sector_id": {
+					"name": "sector_id",
+					"type": "varchar(16)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"latitude": {
+					"name": "latitude",
+					"type": "double precision",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"longitude": {
+					"name": "longitude",
+					"type": "double precision",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				},
+				"updated_at": {
+					"name": "updated_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				}
+			},
+			"indexes": {
+				"villages_name_index": {
+					"name": "villages_name_index",
+					"columns": [
+						{
+							"expression": "name",
+							"isExpression": false,
+							"asc": true,
+							"nulls": "last"
+						}
+					],
+					"isUnique": false,
+					"concurrently": false,
+					"method": "btree",
+					"with": {}
+				}
+			},
+			"foreignKeys": {
+				"villages_sector_id_cells_id_fk": {
+					"name": "villages_sector_id_cells_id_fk",
+					"tableFrom": "villages",
+					"tableTo": "cells",
+					"columnsFrom": ["sector_id"],
+					"columnsTo": ["id"],
+					"onDelete": "cascade",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {
+				"villages_name_unique": {
+					"name": "villages_name_unique",
+					"nullsNotDistinct": false,
+					"columns": ["name"]
+				}
+			}
+		}
+	},
+	"enums": {
+		"public.complexity_level": {
+			"name": "complexity_level",
+			"schema": "public",
+			"values": [
+				"LEVEL_1",
+				"LEVEL_2",
+				"LEVEL_3",
+				"LEVEL_4",
+				"LEVEL_5",
+				"LEVEL_6",
+				"LEVEL_7"
+			]
+		},
+		"public.role": {
+			"name": "role",
+			"schema": "public",
+			"values": ["USER", "ADMIN"]
+		}
+	},
+	"schemas": {},
+	"_meta": {
+		"columns": {},
+		"schemas": {},
+		"tables": {}
+	}
+}

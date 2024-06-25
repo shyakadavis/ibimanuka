@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { Scrypt } from "lucia";
 import { create_drizzle_client } from "~/db";
 import { create_lucia_instance } from "~/db/lucia";
-import { users } from "~/db/schema";
+import { users } from "~/db/schemas";
 import { generate_new_id } from "~/utils/generate-id";
 import {
 	log_in_with_email_and_password,

@@ -2,7 +2,7 @@ import { DrizzlePostgreSQLAdapter } from "@lucia-auth/adapter-drizzle";
 import { DEV } from "esm-env";
 import { Lucia } from "lucia";
 import { create_drizzle_client } from ".";
-import * as schema from "./schema";
+import * as schema from "./schemas";
 
 declare module "lucia" {
 	interface Register {

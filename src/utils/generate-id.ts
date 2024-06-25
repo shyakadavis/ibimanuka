@@ -6,8 +6,13 @@ export const nanoid = customAlphabet(
 
 const prefixes = {
 	category: "cat",
+	cell: "cel",
+	district: "dct",
+	province: "prv",
 	riddle: "rdl",
+	sector: "sec",
 	user: "usr",
+	village: "vil",
 } as const;
 
 /**

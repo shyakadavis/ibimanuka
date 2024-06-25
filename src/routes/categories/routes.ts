@@ -1,5 +1,5 @@
 import { createRoute } from "@hono/zod-openapi";
-import { category_schema } from "~/db/schema";
+import { category_schema } from "~/db/schemas";
 import { is_admin } from "~/middleware/is-admin";
 import { is_authenticated } from "~/middleware/is-authenticated";
 import {
@@ -8,10 +8,9 @@ import {
 	success_without_data_schema,
 } from "~/utils/responses";
 import {
-	delete_category_param_schema,
-	get_categories_query_params_schema,
-	get_single_category_param_schema,
-	update_category_param_schema,
+	delete_category_request_schema,
+	get_categories_request_schema,
+	update_category_request_schema,
 } from "./schemas";
 
 export const get_all_categories = createRoute({
@@ -21,7 +20,7 @@ export const get_all_categories = createRoute({
 	summary: "Get all categories",
 	description:
 		"Returns a list of all categories. Can return a subset of categories by using the `limit` and `offset` query parameters.",
-	request: { query: get_categories_query_params_schema },
+	request: { query: get_categories_request_schema.omit({ id: true }) },
 	responses: {
 		200: {
 			description: "Returns a list of all categories",
@@ -41,7 +40,14 @@ export const get_single_category = createRoute({
 	tags: ["Categories"],
 	summary: "Get a single category",
 	description: "Returns a single category by its `id`.",
-	request: { params: get_single_category_param_schema },
+	request: {
+		params: get_categories_request_schema.pick({ id: true }),
+		query: get_categories_request_schema.omit({
+			id: true,
+			limit: true,
+			offset: true,
+		}),
+	},
 	responses: {
 		200: {
 			description: "Returns a single category",
@@ -95,7 +101,7 @@ export const update_category = createRoute({
 	description:
 		"Updates a category by its `id`. Requires a unique `name` and a `description`.",
 	request: {
-		params: update_category_param_schema,
+		params: update_category_request_schema,
 		body: {
 			content: {
 				"application/json": {
@@ -124,7 +130,7 @@ export const delete_category = createRoute({
 	tags: ["Categories"],
 	summary: "Delete a category",
 	description: "Deletes a category by its `id`.",
-	request: { params: delete_category_param_schema },
+	request: { params: delete_category_request_schema },
 	responses: {
 		200: {
 			content: { "application/json": { schema: success_without_data_schema } },

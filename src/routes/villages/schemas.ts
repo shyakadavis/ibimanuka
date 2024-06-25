@@ -1,6 +1,6 @@
 import { z } from "@hono/zod-openapi";
 
-export const get_riddles_request_schema = z.object({
+export const get_villages_request_schema = z.object({
 	id: z
 		.string()
 		.min(16)
@@ -9,9 +9,9 @@ export const get_riddles_request_schema = z.object({
 			param: {
 				name: "id",
 				in: "path",
-				description: "The ID of the riddle to retrieve",
+				description: "The ID of the village to retrieve",
 			},
-			example: "rdl_FZbZjD3JJ5VQ",
+			example: "vil_DEjnvJqDnPuP",
 		}),
 
 	limit: z
@@ -22,7 +22,7 @@ export const get_riddles_request_schema = z.object({
 			param: {
 				name: "limit",
 				in: "query",
-				description: "The number of riddles to return",
+				description: "The number of villages to return",
 			},
 			example: "10",
 		}),
@@ -35,7 +35,7 @@ export const get_riddles_request_schema = z.object({
 			param: {
 				name: "offset",
 				in: "query",
-				description: "The number of riddles to skip",
+				description: "The number of villages to skip",
 			},
 			example: "0",
 		}),
@@ -49,11 +49,11 @@ export const get_riddles_request_schema = z.object({
 				in: "query",
 				description: "The fields to return",
 			},
-			example: "question,answer",
+			example: "name,longitude,latitude",
 		}),
 });
 
-export const update_riddle_request_schema = z.object({
+export const update_village_request_schema = z.object({
 	id: z
 		.string()
 		.min(16)
@@ -62,13 +62,13 @@ export const update_riddle_request_schema = z.object({
 			param: {
 				name: "id",
 				in: "path",
-				description: "The ID of the riddle to update",
+				description: "The ID of the village to update",
 			},
-			example: "rdl_FZbZjD3JJ5VQ",
+			example: "vil_DEjnvJqDnPuP",
 		}),
 });
 
-export const delete_riddle_request_schema = z.object({
+export const delete_village_request_schema = z.object({
 	id: z
 		.string()
 		.min(16)
@@ -77,8 +77,8 @@ export const delete_riddle_request_schema = z.object({
 			param: {
 				name: "id",
 				in: "path",
-				description: "The ID of the riddle to delete",
+				description: "The ID of the village to delete",
 			},
-			example: "rdl_FZbZjD3JJ5VQ",
+			example: "vil_DEjnvJqDnPuP",
 		}),
 });
