@@ -12,10 +12,7 @@ import {
 	update_riddle,
 } from "./routes";
 
-export const riddles_routes = new OpenAPIHono<{
-	Bindings: Bindings;
-	Variables: Variables;
-}>();
+export const riddles_routes = new OpenAPIHono<Env>();
 
 riddles_routes.openapi(get_all_riddles, async (ctx) => {
 	const { limit, offset, fields } = ctx.req.valid("query");

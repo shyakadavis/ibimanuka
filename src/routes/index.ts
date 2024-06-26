@@ -8,10 +8,7 @@ import { riddles_routes } from "./riddles";
 import { sectors_routes } from "./sectors";
 import { villages_routes } from "./villages";
 
-export const api_routes = new OpenAPIHono<{
-	Bindings: Bindings;
-	Variables: Variables;
-}>();
+export const api_routes = new OpenAPIHono<Env>();
 
 api_routes.route("/auth", auth_routes);
 api_routes.route("/categories", categories_routes);

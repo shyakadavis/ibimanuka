@@ -12,10 +12,7 @@ import {
 	update_province,
 } from "./routes";
 
-export const provinces_routes = new OpenAPIHono<{
-	Bindings: Bindings;
-	Variables: Variables;
-}>();
+export const provinces_routes = new OpenAPIHono<Env>();
 
 provinces_routes.openapi(get_all_provinces, async (ctx) => {
 	const { limit, offset, fields, districts, district_limit, district_fields } =

@@ -12,10 +12,7 @@ import {
 	update_sector,
 } from "./routes";
 
-export const sectors_routes = new OpenAPIHono<{
-	Bindings: Bindings;
-	Variables: Variables;
-}>();
+export const sectors_routes = new OpenAPIHono<Env>();
 
 sectors_routes.openapi(get_all_sectors, async (ctx) => {
 	const { limit, offset, fields, cells, cell_limit, cell_fields } =
