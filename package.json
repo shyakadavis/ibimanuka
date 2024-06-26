@@ -16,6 +16,7 @@
 		"db:studio": "drizzle-kit studio"
 	},
 	"dependencies": {
+		"@hono-rate-limiter/cloudflare": "^0.1.1",
 		"@hono/zod-openapi": "^0.14.5",
 		"@lucia-auth/adapter-drizzle": "^1.0.7",
 		"@neondatabase/serverless": "^0.9.3",
