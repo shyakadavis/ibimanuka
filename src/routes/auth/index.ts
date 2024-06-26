@@ -11,10 +11,7 @@ import {
 	sign_up_with_email_and_password,
 } from "./routes";
 
-export const auth_routes = new OpenAPIHono<{
-	Bindings: Bindings;
-	Variables: Variables;
-}>();
+export const auth_routes = new OpenAPIHono<Env>();
 
 auth_routes.openapi(sign_up_with_email_and_password, async (ctx) => {
 	const { email, name, given_name, surname, password } = ctx.req.valid("json");

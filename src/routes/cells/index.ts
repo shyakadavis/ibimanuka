@@ -12,10 +12,7 @@ import {
 	update_cell,
 } from "./routes";
 
-export const cells_routes = new OpenAPIHono<{
-	Bindings: Bindings;
-	Variables: Variables;
-}>();
+export const cells_routes = new OpenAPIHono<Env>();
 
 cells_routes.openapi(get_all_cells, async (ctx) => {
 	const { limit, offset, fields, villages, village_limit, village_fields } =

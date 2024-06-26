@@ -1,3 +1,4 @@
+import { cloudflareRateLimiter } from "@hono-rate-limiter/cloudflare";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { apiReference } from "@scalar/hono-api-reference";
 import { cors } from "hono/cors";
@@ -7,16 +8,22 @@ import { api_routes } from "./routes";
 import { open_api_tags } from "./utils/open-api-tags";
 import { new_http_error } from "./utils/responses";
 
-const app = new OpenAPIHono<{ Bindings: Bindings; Variables: Variables }>();
+const app = new OpenAPIHono<Env>();
 
 app.use("/*", cors());
 app.use(csrf());
 app.use(prettyJSON());
+app.use((ctx, next) =>
+	cloudflareRateLimiter<Env>({
+		rateLimitBinding: ctx.env.RATE_LIMITER,
+		keyGenerator: (c) => c.req.header("cf-connecting-ip") ?? "", // Method to generate custom identifiers for clients.,
+	})(ctx, next),
+);
 app.get("/", apiReference({ theme: "deepSpace", spec: { url: "/docs" } }));
 app.doc("/docs", {
 	openapi: "3.0.0",
 	info: {
-		version: "1.0.0",
+		version: "0.1.0",
 		title: "🌊 IBIMANUKA API 🌊",
 		description: "An archival API for RWANDA 🇷🇼(WIP)",
 	},

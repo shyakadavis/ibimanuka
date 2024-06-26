@@ -12,10 +12,7 @@ import {
 	update_village,
 } from "./routes";
 
-export const villages_routes = new OpenAPIHono<{
-	Bindings: Bindings;
-	Variables: Variables;
-}>();
+export const villages_routes = new OpenAPIHono<Env>();
 
 villages_routes.openapi(get_all_villages, async (ctx) => {
 	const { limit, offset, fields } = ctx.req.valid("query");

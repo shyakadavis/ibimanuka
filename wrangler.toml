@@ -20,3 +20,9 @@ main = "./src/index.ts"
 
 # [ai]
 # binding = "AI"
+
+[[unsafe.bindings]]
+name = "RATE_LIMITER"
+type = "ratelimit"
+namespace_id = "1001"
+simple = { limit = 10, period = 60 } # limit 10 requests per 60 seconds
