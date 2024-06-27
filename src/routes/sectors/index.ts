@@ -20,25 +20,28 @@ sectors_routes.openapi(get_all_sectors, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const data = await db.query.sectors.findMany({
-		limit,
-		offset,
-		columns: fields
-			? parse_fields_to_columns(sector_schema, fields)
-			: undefined,
-		with: cells
-			? {
-					cells: {
-						limit: cell_limit,
-						columns: cell_fields
-							? parse_fields_to_columns(sector_schema, cell_fields)
-							: undefined,
-						// TODO: Decide if we want to recursively handle queries for cells, and villages
-						// with: { cells: true },
-					},
-				}
-			: undefined,
-	});
+	const data = await db.query.sectors
+		.findMany({
+			limit,
+			offset,
+			columns: fields
+				? parse_fields_to_columns(sector_schema, fields)
+				: undefined,
+			with: cells
+				? {
+						cells: {
+							limit: cell_limit,
+							columns: cell_fields
+								? parse_fields_to_columns(sector_schema, cell_fields)
+								: undefined,
+							// TODO: Decide if we want to recursively handle queries for cells, and villages
+							// with: { cells: true },
+						},
+					}
+				: undefined,
+		})
+		.prepare("get_all_sectors")
+		.execute();
 
 	return ctx.json(
 		{
@@ -56,24 +59,27 @@ sectors_routes.openapi(get_single_sector, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const data = await db.query.sectors.findFirst({
-		columns: fields
-			? parse_fields_to_columns(sector_schema, fields)
-			: undefined,
-		with: cells
-			? {
-					cells: {
-						limit: cell_limit,
-						columns: cell_fields
-							? parse_fields_to_columns(sector_schema, cell_fields)
-							: undefined,
-						// TODO: Decide if we want to recursively handle queries for cells, and villages
-						// with: { cells: true },
-					},
-				}
-			: undefined,
-		where: eq(sectors.id, id),
-	});
+	const data = await db.query.sectors
+		.findFirst({
+			where: eq(sectors.id, id),
+			columns: fields
+				? parse_fields_to_columns(sector_schema, fields)
+				: undefined,
+			with: cells
+				? {
+						cells: {
+							limit: cell_limit,
+							columns: cell_fields
+								? parse_fields_to_columns(sector_schema, cell_fields)
+								: undefined,
+							// TODO: Decide if we want to recursively handle queries for cells, and villages
+							// with: { cells: true },
+						},
+					}
+				: undefined,
+		})
+		.prepare("get_single_sector")
+		.execute();
 
 	if (!data) {
 		return ctx.json(
@@ -87,6 +93,7 @@ sectors_routes.openapi(get_single_sector, async (ctx) => {
 			404,
 		);
 	}
+
 	return ctx.json(
 		{
 			success: true,
@@ -102,10 +109,13 @@ sectors_routes.openapi(create_sector, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const valid_district = await db.query.districts.findFirst({
-		where: eq(districts.id, payload.district_id),
-		columns: { id: true },
-	});
+	const valid_district = await db.query.districts
+		.findFirst({
+			where: eq(districts.id, payload.district_id),
+			columns: { id: true },
+		})
+		.prepare("get_valid_district")
+		.execute();
 
 	if (!valid_district) {
 		return ctx.json(
@@ -122,7 +132,9 @@ sectors_routes.openapi(create_sector, async (ctx) => {
 
 	const data = await db
 		.insert(sectors)
-		.values({ id: generate_new_id("sector"), ...payload });
+		.values({ id: generate_new_id("sector"), ...payload })
+		.prepare("create_sector")
+		.execute();
 
 	if (data.rowCount === 0) {
 		return ctx.json(
@@ -152,10 +164,16 @@ sectors_routes.openapi(update_sector, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const existing_sector = await db.query.sectors.findFirst({
-		where: eq(sectors.id, id),
-		columns: { id: true, name: true },
-	});
+	const existing_sector = await db.query.sectors
+		.findFirst({
+			where: eq(sectors.id, id),
+			columns: {
+				id: true,
+				name: true,
+			},
+		})
+		.prepare("get_existing_sector")
+		.execute();
 
 	if (!existing_sector) {
 		return ctx.json(
@@ -170,10 +188,13 @@ sectors_routes.openapi(update_sector, async (ctx) => {
 		);
 	}
 
-	const valid_district = await db.query.districts.findFirst({
-		where: eq(districts.id, payload.district_id),
-		columns: { id: true },
-	});
+	const valid_district = await db.query.districts
+		.findFirst({
+			where: eq(districts.id, payload.district_id),
+			columns: { id: true },
+		})
+		.prepare("get_valid_district")
+		.execute();
 
 	if (!valid_district) {
 		return ctx.json(
@@ -217,10 +238,13 @@ sectors_routes.openapi(delete_sector, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const existing_sector = await db.query.sectors.findFirst({
-		where: eq(sectors.id, id),
-		columns: { id: true },
-	});
+	const existing_sector = await db.query.sectors
+		.findFirst({
+			where: eq(sectors.id, id),
+			columns: { id: true },
+		})
+		.prepare("get_existing_sector")
+		.execute();
 
 	if (!existing_sector) {
 		return ctx.json(
@@ -235,7 +259,11 @@ sectors_routes.openapi(delete_sector, async (ctx) => {
 		);
 	}
 
-	const data = await db.delete(sectors).where(eq(sectors.id, id));
+	const data = await db
+		.delete(sectors)
+		.where(eq(sectors.id, id))
+		.prepare("delete_sector")
+		.execute();
 
 	if (data.rowCount === 0) {
 		return ctx.json(

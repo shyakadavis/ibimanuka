@@ -20,25 +20,28 @@ districts_routes.openapi(get_all_districts, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const data = await db.query.districts.findMany({
-		limit,
-		offset,
-		columns: fields
-			? parse_fields_to_columns(district_schema, fields)
-			: undefined,
-		with: sectors
-			? {
-					sectors: {
-						limit: sector_limit,
-						columns: sector_fields
-							? parse_fields_to_columns(district_schema, sector_fields)
-							: undefined,
-						// TODO: Decide if we want to recursively handle queries for cells, and villages
-						// with: { cells: true },
-					},
-				}
-			: undefined,
-	});
+	const data = await db.query.districts
+		.findMany({
+			limit,
+			offset,
+			columns: fields
+				? parse_fields_to_columns(district_schema, fields)
+				: undefined,
+			with: sectors
+				? {
+						sectors: {
+							limit: sector_limit,
+							columns: sector_fields
+								? parse_fields_to_columns(district_schema, sector_fields)
+								: undefined,
+							// TODO: Decide if we want to recursively handle queries for cells, and villages
+							// with: { cells: true },
+						},
+					}
+				: undefined,
+		})
+		.prepare("get_all_districts")
+		.execute();
 
 	return ctx.json(
 		{
@@ -58,6 +61,7 @@ districts_routes.openapi(get_single_district, async (ctx) => {
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
 	const data = await db.query.districts.findFirst({
+		where: eq(districts.id, id),
 		columns: fields
 			? parse_fields_to_columns(district_schema, fields)
 			: undefined,
@@ -73,7 +77,6 @@ districts_routes.openapi(get_single_district, async (ctx) => {
 					},
 				}
 			: undefined,
-		where: eq(districts.id, id),
 	});
 
 	if (!data) {
@@ -88,6 +91,7 @@ districts_routes.openapi(get_single_district, async (ctx) => {
 			404,
 		);
 	}
+
 	return ctx.json(
 		{
 			success: true,
@@ -103,10 +107,13 @@ districts_routes.openapi(create_district, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const valid_province = await db.query.provinces.findFirst({
-		where: eq(provinces.id, payload.province_id),
-		columns: { id: true },
-	});
+	const valid_province = await db.query.provinces
+		.findFirst({
+			where: eq(provinces.id, payload.province_id),
+			columns: { id: true },
+		})
+		.prepare("create_district")
+		.execute();
 
 	if (!valid_province) {
 		return ctx.json(
@@ -123,7 +130,12 @@ districts_routes.openapi(create_district, async (ctx) => {
 
 	const data = await db
 		.insert(districts)
-		.values({ id: generate_new_id("district"), ...payload });
+		.values({
+			id: generate_new_id("district"),
+			...payload,
+		})
+		.prepare("create_district")
+		.execute();
 
 	if (data.rowCount === 0) {
 		return ctx.json(
@@ -153,10 +165,16 @@ districts_routes.openapi(update_district, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const existing_district = await db.query.districts.findFirst({
-		where: eq(districts.id, id),
-		columns: { id: true, name: true },
-	});
+	const existing_district = await db.query.districts
+		.findFirst({
+			where: eq(districts.id, id),
+			columns: {
+				id: true,
+				name: true,
+			},
+		})
+		.prepare("update_district")
+		.execute();
 
 	if (!existing_district) {
 		return ctx.json(
@@ -171,10 +189,13 @@ districts_routes.openapi(update_district, async (ctx) => {
 		);
 	}
 
-	const valid_province = await db.query.provinces.findFirst({
-		where: eq(provinces.id, payload.province_id),
-		columns: { id: true },
-	});
+	const valid_province = await db.query.provinces
+		.findFirst({
+			where: eq(provinces.id, payload.province_id),
+			columns: { id: true },
+		})
+		.prepare("get_valid_province")
+		.execute();
 
 	if (!valid_province) {
 		return ctx.json(
@@ -192,7 +213,9 @@ districts_routes.openapi(update_district, async (ctx) => {
 	const data = await db
 		.update(districts)
 		.set(payload)
-		.where(eq(districts.id, id));
+		.where(eq(districts.id, id))
+		.prepare("update_district")
+		.execute();
 
 	if (data.rowCount === 0) {
 		return ctx.json(
@@ -218,11 +241,13 @@ districts_routes.openapi(update_district, async (ctx) => {
 
 districts_routes.openapi(delete_district, async (ctx) => {
 	const { id } = ctx.req.valid("param");
+
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
-	const existing_district = await db.query.districts.findFirst({
-		where: eq(districts.id, id),
-		columns: { id: true },
-	});
+
+	const existing_district = await db.query.districts
+		.findFirst({ where: eq(districts.id, id), columns: { id: true } })
+		.prepare("get_existing_district")
+		.execute();
 
 	if (!existing_district) {
 		return ctx.json(
@@ -237,7 +262,11 @@ districts_routes.openapi(delete_district, async (ctx) => {
 		);
 	}
 
-	const data = await db.delete(districts).where(eq(districts.id, id));
+	const data = await db
+		.delete(districts)
+		.where(eq(districts.id, id))
+		.prepare("delete_district")
+		.execute();
 
 	if (data.rowCount === 0) {
 		return ctx.json(

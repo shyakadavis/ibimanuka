@@ -16,7 +16,8 @@ export const auth_routes = new OpenAPIHono<Env>();
 auth_routes.openapi(sign_up_with_email_and_password, async (ctx) => {
 	const { email, name, given_name, surname, password } = ctx.req.valid("json");
 
-	// TODO: (Tech-debt)
+	// TODO:
+	// (Tech-debt)
 	// This is a pure JS implementation of Scrypt, ergo, it is anywhere from 2~3 times slower than implementations based on native code.
 	// If we ever go for paid CF Workers plan, or if we ever find ourselves on a Node.js environment, we can use other alternatives like Argon2id.
 	// Argon2id is a good choice, but hashing exceeds CPU time limit in Cloudflare Workers.
@@ -26,10 +27,13 @@ auth_routes.openapi(sign_up_with_email_and_password, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const existing_user = await db.query.users.findFirst({
-		where: eq(users.email, email.toLowerCase()),
-		columns: { id: true },
-	});
+	const existing_user = await db.query.users
+		.findFirst({
+			where: eq(users.email, email.toLowerCase()),
+			columns: { id: true },
+		})
+		.prepare("get_existing_user")
+		.execute();
 
 	if (existing_user) {
 		return ctx.json(
@@ -37,7 +41,8 @@ auth_routes.openapi(sign_up_with_email_and_password, async (ctx) => {
 				success: false,
 				error: {
 					status: 400,
-					// TODO: Re-think this message. Do we really want to expose this information?
+					// TODO:
+					// Re-think this message. Do we really want to expose this information?
 					message: "User with this email already exists",
 				},
 			},
@@ -45,14 +50,18 @@ auth_routes.openapi(sign_up_with_email_and_password, async (ctx) => {
 		);
 	}
 
-	const res = await db.insert(users).values({
-		id: generate_new_id("user"),
-		email: email.toLowerCase(),
-		name,
-		given_name,
-		surname,
-		hashed_password,
-	});
+	const res = await db
+		.insert(users)
+		.values({
+			id: generate_new_id("user"),
+			email: email.toLowerCase(),
+			name,
+			given_name,
+			surname,
+			hashed_password,
+		})
+		.prepare("insert_new_user")
+		.execute();
 
 	if (res.rowCount !== 1) {
 		return ctx.json(
@@ -67,7 +76,8 @@ auth_routes.openapi(sign_up_with_email_and_password, async (ctx) => {
 		);
 	}
 
-	// TODO: Send verification email
+	// TODO:
+	// Send verification email
 
 	return ctx.json(
 		{
@@ -84,16 +94,20 @@ auth_routes.openapi(log_in_with_email_and_password, async (ctx) => {
 
 	const { email, password } = ctx.req.valid("json");
 
-	const existing_user = await db.query.users.findFirst({
-		where: eq(users.email, email.toLowerCase()),
-		columns: {
-			id: true,
-			email: true,
-			hashed_password: true,
-			name: true,
-			role: true,
-		},
-	});
+	const existing_user = await db.query.users
+		.findFirst({
+			where: eq(users.email, email.toLowerCase()),
+			columns: {
+				id: true,
+				email: true,
+				hashed_password: true,
+				name: true,
+				role: true,
+				email_verified: true,
+			},
+		})
+		.prepare("get_existing_user")
+		.execute();
 
 	if (!existing_user) {
 		return ctx.json(
@@ -108,7 +122,18 @@ auth_routes.openapi(log_in_with_email_and_password, async (ctx) => {
 		);
 	}
 
-	// TODO: Don't allow login if user is not verified
+	if (!existing_user.email_verified) {
+		return ctx.json(
+			{
+				success: false,
+				error: {
+					status: 400,
+					message: "Account not verified. Please check your email.",
+				},
+			},
+			400,
+		);
+	}
 
 	if (!existing_user.hashed_password) {
 		return ctx.json(
@@ -116,7 +141,8 @@ auth_routes.openapi(log_in_with_email_and_password, async (ctx) => {
 				success: false,
 				error: {
 					status: 400,
-					// TODO: Re-think this message.
+					// TODO:
+					// Re-think this message.
 					// It's not really invalid credentials, more like, 'No password set for this account. Please reset your password.'
 					// But then again, it's a security risk to expose this information.
 					message: "Invalid credentials",
@@ -152,7 +178,7 @@ auth_routes.openapi(log_in_with_email_and_password, async (ctx) => {
 	// As I'm still getting used to Hono, I'm not sure if this is necessary.
 	// What is `context` in Hono? Does setting it here at the end of my route reflect across other routes?
 	// If not, then we should remove the user-and-session-setting part from here and leave it be in the middleware.
-	// But then again, what if the route is not protected by the middleware, and I still need to access the user and session?
+	// But then again, what if the route is not protected by the middleware, and I still need to access the user without doing a db call?
 	// Will revisit this later.
 	ctx.set("User", {
 		id: existing_user.id,

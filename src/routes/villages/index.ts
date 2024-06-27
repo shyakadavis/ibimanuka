@@ -19,13 +19,16 @@ villages_routes.openapi(get_all_villages, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const data = await db.query.villages.findMany({
-		limit,
-		offset,
-		columns: fields
-			? parse_fields_to_columns(village_schema, fields)
-			: undefined,
-	});
+	const data = await db.query.villages
+		.findMany({
+			limit,
+			offset,
+			columns: fields
+				? parse_fields_to_columns(village_schema, fields)
+				: undefined,
+		})
+		.prepare("get_all_villages")
+		.execute();
 
 	return ctx.json(
 		{
@@ -43,12 +46,15 @@ villages_routes.openapi(get_single_village, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const data = await db.query.villages.findFirst({
-		where: eq(villages.id, id),
-		columns: fields
-			? parse_fields_to_columns(village_schema, fields)
-			: undefined,
-	});
+	const data = await db.query.villages
+		.findFirst({
+			where: eq(villages.id, id),
+			columns: fields
+				? parse_fields_to_columns(village_schema, fields)
+				: undefined,
+		})
+		.prepare("get_single_village")
+		.execute();
 
 	if (!data) {
 		return ctx.json(
@@ -79,10 +85,13 @@ villages_routes.openapi(create_village, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const valid_cell = await db.query.cells.findFirst({
-		where: eq(cells.id, cell_id),
-		columns: { id: true },
-	});
+	const valid_cell = await db.query.cells
+		.findFirst({
+			where: eq(cells.id, cell_id),
+			columns: { id: true },
+		})
+		.prepare("get_valid_cell")
+		.execute();
 
 	if (!valid_cell) {
 		return ctx.json(
@@ -97,10 +106,13 @@ villages_routes.openapi(create_village, async (ctx) => {
 		);
 	}
 
-	const existing_village = await db.query.villages.findFirst({
-		where: eq(villages.name, name),
-		columns: { name: true },
-	});
+	const existing_village = await db.query.villages
+		.findFirst({
+			where: eq(villages.name, name),
+			columns: { name: true },
+		})
+		.prepare("get_existing_village")
+		.execute();
 
 	if (existing_village) {
 		return ctx.json(
@@ -115,14 +127,18 @@ villages_routes.openapi(create_village, async (ctx) => {
 		);
 	}
 
-	const data = await db.insert(villages).values({
-		id: generate_new_id("village"),
-		name,
-		description,
-		latitude,
-		longitude,
-		cell_id,
-	});
+	const data = await db
+		.insert(villages)
+		.values({
+			id: generate_new_id("village"),
+			name,
+			description,
+			latitude,
+			longitude,
+			cell_id,
+		})
+		.prepare("create_village")
+		.execute();
 
 	if (data.rowCount === 0) {
 		return ctx.json(
@@ -152,10 +168,16 @@ villages_routes.openapi(update_village, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const existing_village = await db.query.villages.findFirst({
-		where: eq(villages.id, id),
-		columns: { id: true, name: true },
-	});
+	const existing_village = await db.query.villages
+		.findFirst({
+			where: eq(villages.id, id),
+			columns: {
+				id: true,
+				name: true,
+			},
+		})
+		.prepare("get_existing_village")
+		.execute();
 
 	if (!existing_village) {
 		return ctx.json(
@@ -170,10 +192,13 @@ villages_routes.openapi(update_village, async (ctx) => {
 		);
 	}
 
-	const valid_cell = await db.query.cells.findFirst({
-		where: eq(cells.id, payload.cell_id),
-		columns: { id: true },
-	});
+	const valid_cell = await db.query.cells
+		.findFirst({
+			where: eq(cells.id, payload.cell_id),
+			columns: { id: true },
+		})
+		.prepare("get_valid_cell")
+		.execute();
 
 	if (!valid_cell) {
 		return ctx.json(
@@ -191,7 +216,9 @@ villages_routes.openapi(update_village, async (ctx) => {
 	const data = await db
 		.update(villages)
 		.set(payload)
-		.where(eq(villages.id, id));
+		.where(eq(villages.id, id))
+		.prepare("update_village")
+		.execute();
 
 	if (data.rowCount === 0) {
 		return ctx.json(
@@ -220,10 +247,13 @@ villages_routes.openapi(delete_village, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const existing_village = await db.query.villages.findFirst({
-		where: eq(villages.id, id),
-		columns: { id: true },
-	});
+	const existing_village = await db.query.villages
+		.findFirst({
+			where: eq(villages.id, id),
+			columns: { id: true },
+		})
+		.prepare("get_existing_village")
+		.execute();
 
 	if (!existing_village) {
 		return ctx.json(
@@ -238,7 +268,12 @@ villages_routes.openapi(delete_village, async (ctx) => {
 		);
 	}
 
-	const data = await db.delete(villages).where(eq(villages.id, id));
+	const data = await db
+		.delete(villages)
+		.where(eq(villages.id, id))
+		.prepare("delete_village")
+		.execute();
+
 	if (data.rowCount === 0) {
 		return ctx.json(
 			{
