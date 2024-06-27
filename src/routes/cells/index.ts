@@ -60,22 +60,27 @@ cells_routes.openapi(get_single_cell, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const data = await db.query.cells.findFirst({
-		where: eq(cells.id, id),
-		columns: fields ? parse_fields_to_columns(cell_schema, fields) : undefined,
-		with: villages
-			? {
-					villages: {
-						limit: village_limit,
-						columns: village_fields
-							? parse_fields_to_columns(cell_schema, village_fields)
-							: undefined,
-						// TODO: Decide if we want to recursively handle queries for villages, and villages
-						// with: { villages: true },
-					},
-				}
-			: undefined,
-	});
+	const data = await db.query.cells
+		.findFirst({
+			where: eq(cells.id, id),
+			columns: fields
+				? parse_fields_to_columns(cell_schema, fields)
+				: undefined,
+			with: villages
+				? {
+						villages: {
+							limit: village_limit,
+							columns: village_fields
+								? parse_fields_to_columns(cell_schema, village_fields)
+								: undefined,
+							// TODO: Decide if we want to recursively handle queries for villages, and villages
+							// with: { villages: true },
+						},
+					}
+				: undefined,
+		})
+		.prepare("get_single_cell")
+		.execute();
 
 	if (!data) {
 		return ctx.json(
