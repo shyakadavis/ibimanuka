@@ -20,23 +20,28 @@ cells_routes.openapi(get_all_cells, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const data = await db.query.cells.findMany({
-		limit,
-		offset,
-		columns: fields ? parse_fields_to_columns(cell_schema, fields) : undefined,
-		with: villages
-			? {
-					villages: {
-						limit: village_limit,
-						columns: village_fields
-							? parse_fields_to_columns(cell_schema, village_fields)
-							: undefined,
-						// TODO: Decide if we want to recursively handle queries for villages, and villages
-						// with: { villages: true },
-					},
-				}
-			: undefined,
-	});
+	const data = await db.query.cells
+		.findMany({
+			limit,
+			offset,
+			columns: fields
+				? parse_fields_to_columns(cell_schema, fields)
+				: undefined,
+			with: villages
+				? {
+						villages: {
+							limit: village_limit,
+							columns: village_fields
+								? parse_fields_to_columns(cell_schema, village_fields)
+								: undefined,
+							// TODO: Decide if we want to recursively handle queries for villages, and villages
+							// with: { villages: true },
+						},
+					}
+				: undefined,
+		})
+		.prepare("get_all_cells")
+		.execute();
 
 	return ctx.json(
 		{
@@ -56,6 +61,7 @@ cells_routes.openapi(get_single_cell, async (ctx) => {
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
 	const data = await db.query.cells.findFirst({
+		where: eq(cells.id, id),
 		columns: fields ? parse_fields_to_columns(cell_schema, fields) : undefined,
 		with: villages
 			? {
@@ -69,7 +75,6 @@ cells_routes.openapi(get_single_cell, async (ctx) => {
 					},
 				}
 			: undefined,
-		where: eq(cells.id, id),
 	});
 
 	if (!data) {
@@ -99,10 +104,13 @@ cells_routes.openapi(create_cell, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const valid_sector = await db.query.sectors.findFirst({
-		where: eq(sectors.id, payload.sector_id),
-		columns: { id: true },
-	});
+	const valid_sector = await db.query.sectors
+		.findFirst({
+			where: eq(sectors.id, payload.sector_id),
+			columns: { id: true },
+		})
+		.prepare("get_valid_sector")
+		.execute();
 
 	if (!valid_sector) {
 		return ctx.json(
@@ -119,7 +127,12 @@ cells_routes.openapi(create_cell, async (ctx) => {
 
 	const data = await db
 		.insert(cells)
-		.values({ id: generate_new_id("cell"), ...payload });
+		.values({
+			id: generate_new_id("cell"),
+			...payload,
+		})
+		.prepare("create_cell")
+		.execute();
 
 	if (data.rowCount === 0) {
 		return ctx.json(
@@ -149,10 +162,16 @@ cells_routes.openapi(update_cell, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const existing_cell = await db.query.cells.findFirst({
-		where: eq(cells.id, id),
-		columns: { id: true, name: true },
-	});
+	const existing_cell = await db.query.cells
+		.findFirst({
+			where: eq(cells.id, id),
+			columns: {
+				id: true,
+				name: true,
+			},
+		})
+		.prepare("get_existing_cell")
+		.execute();
 
 	if (!existing_cell) {
 		return ctx.json(
@@ -167,10 +186,13 @@ cells_routes.openapi(update_cell, async (ctx) => {
 		);
 	}
 
-	const valid_sector = await db.query.sectors.findFirst({
-		where: eq(sectors.id, payload.sector_id),
-		columns: { id: true },
-	});
+	const valid_sector = await db.query.sectors
+		.findFirst({
+			where: eq(sectors.id, payload.sector_id),
+			columns: { id: true },
+		})
+		.prepare("get_valid_sector")
+		.execute();
 
 	if (!valid_sector) {
 		return ctx.json(
@@ -185,7 +207,12 @@ cells_routes.openapi(update_cell, async (ctx) => {
 		);
 	}
 
-	const data = await db.update(cells).set(payload).where(eq(cells.id, id));
+	const data = await db
+		.update(cells)
+		.set(payload)
+		.where(eq(cells.id, id))
+		.prepare("update_cell")
+		.execute();
 
 	if (data.rowCount === 0) {
 		return ctx.json(
@@ -211,11 +238,16 @@ cells_routes.openapi(update_cell, async (ctx) => {
 
 cells_routes.openapi(delete_cell, async (ctx) => {
 	const { id } = ctx.req.valid("param");
+
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
-	const existing_cell = await db.query.cells.findFirst({
-		where: eq(cells.id, id),
-		columns: { id: true },
-	});
+
+	const existing_cell = await db.query.cells
+		.findFirst({
+			where: eq(cells.id, id),
+			columns: { id: true },
+		})
+		.prepare("get_existing_cell")
+		.execute();
 
 	if (!existing_cell) {
 		return ctx.json(
@@ -230,7 +262,11 @@ cells_routes.openapi(delete_cell, async (ctx) => {
 		);
 	}
 
-	const data = await db.delete(cells).where(eq(cells.id, id));
+	const data = await db
+		.delete(cells)
+		.where(eq(cells.id, id))
+		.prepare("delete_cell")
+		.execute();
 
 	if (data.rowCount === 0) {
 		return ctx.json(

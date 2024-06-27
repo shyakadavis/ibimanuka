@@ -20,25 +20,28 @@ provinces_routes.openapi(get_all_provinces, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const data = await db.query.provinces.findMany({
-		limit,
-		offset,
-		columns: fields
-			? parse_fields_to_columns(province_schema, fields)
-			: undefined,
-		with: districts
-			? {
-					districts: {
-						limit: district_limit,
-						columns: district_fields
-							? parse_fields_to_columns(district_schema, district_fields)
-							: undefined,
-						// TODO: Decide if we want to recursively handle queries for sectors, cells, and villages
-						// with: { sectors: true },
-					},
-				}
-			: undefined,
-	});
+	const data = await db.query.provinces
+		.findMany({
+			limit,
+			offset,
+			columns: fields
+				? parse_fields_to_columns(province_schema, fields)
+				: undefined,
+			with: districts
+				? {
+						districts: {
+							limit: district_limit,
+							columns: district_fields
+								? parse_fields_to_columns(district_schema, district_fields)
+								: undefined,
+							// TODO: Decide if we want to recursively handle queries for sectors, cells, and villages
+							// with: { sectors: true },
+						},
+					}
+				: undefined,
+		})
+		.prepare("get_all_provinces")
+		.execute();
 
 	return ctx.json(
 		{
@@ -57,22 +60,25 @@ provinces_routes.openapi(get_single_province, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const data = await db.query.provinces.findFirst({
-		where: eq(provinces.id, id),
-		columns: fields
-			? parse_fields_to_columns(province_schema, fields)
-			: undefined,
-		with: districts
-			? {
-					districts: {
-						limit: district_limit,
-						columns: district_fields
-							? parse_fields_to_columns(district_schema, district_fields)
-							: undefined,
-					},
-				}
-			: undefined,
-	});
+	const data = await db.query.provinces
+		.findFirst({
+			where: eq(provinces.id, id),
+			columns: fields
+				? parse_fields_to_columns(province_schema, fields)
+				: undefined,
+			with: districts
+				? {
+						districts: {
+							limit: district_limit,
+							columns: district_fields
+								? parse_fields_to_columns(district_schema, district_fields)
+								: undefined,
+						},
+					}
+				: undefined,
+		})
+		.prepare("get_single_province")
+		.execute();
 
 	if (!data) {
 		return ctx.json(
@@ -102,10 +108,13 @@ provinces_routes.openapi(create_province, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const existing_province = await db.query.provinces.findFirst({
-		where: eq(provinces.name, name),
-		columns: { name: true },
-	});
+	const existing_province = await db.query.provinces
+		.findFirst({
+			where: eq(provinces.name, name),
+			columns: { name: true },
+		})
+		.prepare("get_existing_province")
+		.execute();
 
 	if (existing_province) {
 		return ctx.json(
@@ -120,13 +129,17 @@ provinces_routes.openapi(create_province, async (ctx) => {
 		);
 	}
 
-	const data = await db.insert(provinces).values({
-		id: generate_new_id("province"),
-		name,
-		description,
-		latitude,
-		longitude,
-	});
+	const data = await db
+		.insert(provinces)
+		.values({
+			id: generate_new_id("province"),
+			name,
+			description,
+			latitude,
+			longitude,
+		})
+		.prepare("create_province")
+		.execute();
 
 	if (data.rowCount === 0) {
 		return ctx.json(
@@ -156,10 +169,16 @@ provinces_routes.openapi(update_province, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const existing_province = await db.query.provinces.findFirst({
-		where: eq(provinces.id, id),
-		columns: { id: true, name: true },
-	});
+	const existing_province = await db.query.provinces
+		.findFirst({
+			where: eq(provinces.id, id),
+			columns: {
+				id: true,
+				name: true,
+			},
+		})
+		.prepare("get_existing_province")
+		.execute();
 
 	if (!existing_province) {
 		return ctx.json(
@@ -175,10 +194,14 @@ provinces_routes.openapi(update_province, async (ctx) => {
 	}
 
 	if (existing_province.name !== name) {
-		const duplicate_province = await db.query.provinces.findFirst({
-			where: eq(provinces.name, name),
-			columns: { name: true },
-		});
+		const duplicate_province = await db.query.provinces
+			.findFirst({
+				where: eq(provinces.name, name),
+				columns: { name: true },
+			})
+			.prepare("get_duplicate_province")
+			.execute();
+
 		if (duplicate_province) {
 			return ctx.json(
 				{
@@ -199,7 +222,10 @@ provinces_routes.openapi(update_province, async (ctx) => {
 			name,
 			description,
 		})
-		.where(eq(provinces.id, id));
+		.where(eq(provinces.id, id))
+		.prepare("update_province")
+		.execute();
+
 	if (data.rowCount === 0) {
 		return ctx.json(
 			{
@@ -227,10 +253,13 @@ provinces_routes.openapi(delete_province, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const existing_province = await db.query.provinces.findFirst({
-		where: eq(provinces.id, id),
-		columns: { id: true },
-	});
+	const existing_province = await db.query.provinces
+		.findFirst({
+			where: eq(provinces.id, id),
+			columns: { id: true },
+		})
+		.prepare("get_existing_province")
+		.execute();
 
 	if (!existing_province) {
 		return ctx.json(
@@ -245,7 +274,12 @@ provinces_routes.openapi(delete_province, async (ctx) => {
 		);
 	}
 
-	const data = await db.delete(provinces).where(eq(provinces.id, id));
+	const data = await db
+		.delete(provinces)
+		.where(eq(provinces.id, id))
+		.prepare("delete_province")
+		.execute();
+
 	if (data.rowCount === 0) {
 		return ctx.json(
 			{

@@ -19,13 +19,16 @@ riddles_routes.openapi(get_all_riddles, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const data = await db.query.riddles.findMany({
-		limit,
-		offset,
-		columns: fields
-			? parse_fields_to_columns(riddle_schema, fields)
-			: undefined,
-	});
+	const data = await db.query.riddles
+		.findMany({
+			limit,
+			offset,
+			columns: fields
+				? parse_fields_to_columns(riddle_schema, fields)
+				: undefined,
+		})
+		.prepare("get_all_riddles")
+		.execute();
 
 	return ctx.json(
 		{
@@ -43,12 +46,15 @@ riddles_routes.openapi(get_single_riddle, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const data = await db.query.riddles.findFirst({
-		columns: fields
-			? parse_fields_to_columns(riddle_schema, fields)
-			: undefined,
-		where: eq(riddles.id, id),
-	});
+	const data = await db.query.riddles
+		.findFirst({
+			where: eq(riddles.id, id),
+			columns: fields
+				? parse_fields_to_columns(riddle_schema, fields)
+				: undefined,
+		})
+		.prepare("get_single_riddle")
+		.execute();
 
 	if (!data) {
 		return ctx.json(
@@ -62,6 +68,7 @@ riddles_routes.openapi(get_single_riddle, async (ctx) => {
 			404,
 		);
 	}
+
 	return ctx.json(
 		{
 			success: true,
@@ -78,10 +85,16 @@ riddles_routes.openapi(create_riddle, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const existing_riddle = await db.query.riddles.findFirst({
-		where: eq(riddles.question, question),
-		columns: { question: true, answer: true },
-	});
+	const existing_riddle = await db.query.riddles
+		.findFirst({
+			where: eq(riddles.question, question),
+			columns: {
+				question: true,
+				answer: true,
+			},
+		})
+		.prepare("create_riddle")
+		.execute();
 
 	if (existing_riddle) {
 		return ctx.json(
@@ -96,14 +109,18 @@ riddles_routes.openapi(create_riddle, async (ctx) => {
 		);
 	}
 
-	const data = await db.insert(riddles).values({
-		id: generate_new_id("riddle"),
-		question,
-		answer,
-		categories,
-		complexity_level,
-		hints,
-	});
+	const data = await db
+		.insert(riddles)
+		.values({
+			id: generate_new_id("riddle"),
+			question,
+			answer,
+			categories,
+			complexity_level,
+			hints,
+		})
+		.prepare("create_riddle")
+		.execute();
 
 	if (data.rowCount === 0) {
 		return ctx.json(
@@ -134,10 +151,13 @@ riddles_routes.openapi(update_riddle, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const existing_riddle = await db.query.riddles.findFirst({
-		where: eq(riddles.id, id),
-		columns: { question: true },
-	});
+	const existing_riddle = await db.query.riddles
+		.findFirst({
+			where: eq(riddles.id, id),
+			columns: { question: true },
+		})
+		.prepare("get_existing_riddle")
+		.execute();
 
 	if (!existing_riddle) {
 		return ctx.json(
@@ -153,10 +173,14 @@ riddles_routes.openapi(update_riddle, async (ctx) => {
 	}
 
 	if (existing_riddle.question !== question) {
-		const duplicate_riddle = await db.query.riddles.findFirst({
-			where: eq(riddles.question, question),
-			columns: { question: true },
-		});
+		const duplicate_riddle = await db.query.riddles
+			.findFirst({
+				where: eq(riddles.question, question),
+				columns: { question: true },
+			})
+			.prepare("check_duplicate_riddle")
+			.execute();
+
 		if (duplicate_riddle) {
 			return ctx.json(
 				{
@@ -180,7 +204,9 @@ riddles_routes.openapi(update_riddle, async (ctx) => {
 			complexity_level,
 			hints,
 		})
-		.where(eq(riddles.id, id));
+		.where(eq(riddles.id, id))
+		.prepare("update_riddle")
+		.execute();
 
 	if (data.rowCount === 0) {
 		return ctx.json(
@@ -209,10 +235,13 @@ riddles_routes.openapi(delete_riddle, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const existing_riddle = await db.query.riddles.findFirst({
-		where: eq(riddles.id, id),
-		columns: { id: true },
-	});
+	const existing_riddle = await db.query.riddles
+		.findFirst({
+			where: eq(riddles.id, id),
+			columns: { id: true },
+		})
+		.prepare("get_existing_riddle")
+		.execute();
 
 	if (!existing_riddle) {
 		return ctx.json(
@@ -227,7 +256,11 @@ riddles_routes.openapi(delete_riddle, async (ctx) => {
 		);
 	}
 
-	const data = await db.delete(riddles).where(eq(riddles.id, id));
+	const data = await db
+		.delete(riddles)
+		.where(eq(riddles.id, id))
+		.prepare("delete_riddle")
+		.execute();
 
 	if (data.rowCount === 0) {
 		return ctx.json(

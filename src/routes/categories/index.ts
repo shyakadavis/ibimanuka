@@ -19,13 +19,16 @@ categories_routes.openapi(get_all_categories, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const data = await db.query.categories.findMany({
-		limit,
-		offset,
-		columns: fields
-			? parse_fields_to_columns(category_schema, fields)
-			: undefined,
-	});
+	const data = await db.query.categories
+		.findMany({
+			limit,
+			offset,
+			columns: fields
+				? parse_fields_to_columns(category_schema, fields)
+				: undefined,
+		})
+		.prepare("get_all_categories")
+		.execute();
 
 	return ctx.json(
 		{
@@ -43,12 +46,15 @@ categories_routes.openapi(get_single_category, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const data = await db.query.categories.findFirst({
-		where: eq(categories.id, id),
-		columns: fields
-			? parse_fields_to_columns(category_schema, fields)
-			: undefined,
-	});
+	const data = await db.query.categories
+		.findFirst({
+			where: eq(categories.id, id),
+			columns: fields
+				? parse_fields_to_columns(category_schema, fields)
+				: undefined,
+		})
+		.prepare("get_single_category")
+		.execute();
 
 	if (!data) {
 		return ctx.json(
@@ -78,10 +84,13 @@ categories_routes.openapi(create_category, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const existing_category = await db.query.categories.findFirst({
-		where: eq(categories.name, name),
-		columns: { name: true },
-	});
+	const existing_category = await db.query.categories
+		.findFirst({
+			where: eq(categories.name, name),
+			columns: { name: true },
+		})
+		.prepare("get_existing_category")
+		.execute();
 
 	if (existing_category) {
 		return ctx.json(
@@ -96,11 +105,15 @@ categories_routes.openapi(create_category, async (ctx) => {
 		);
 	}
 
-	const data = await db.insert(categories).values({
-		id: generate_new_id("category"),
-		name,
-		description,
-	});
+	const data = await db
+		.insert(categories)
+		.values({
+			id: generate_new_id("category"),
+			name,
+			description,
+		})
+		.prepare("create_category")
+		.execute();
 
 	if (data.rowCount === 0) {
 		return ctx.json(
@@ -130,10 +143,13 @@ categories_routes.openapi(update_category, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const existing_category = await db.query.categories.findFirst({
-		where: eq(categories.id, id),
-		columns: { id: true, name: true },
-	});
+	const existing_category = await db.query.categories
+		.findFirst({
+			where: eq(categories.id, id),
+			columns: { id: true, name: true },
+		})
+		.prepare("get_existing_category")
+		.execute();
 
 	if (!existing_category) {
 		return ctx.json(
@@ -149,10 +165,14 @@ categories_routes.openapi(update_category, async (ctx) => {
 	}
 
 	if (existing_category.name !== name) {
-		const duplicate_category = await db.query.categories.findFirst({
-			where: eq(categories.name, name),
-			columns: { name: true },
-		});
+		const duplicate_category = await db.query.categories
+			.findFirst({
+				where: eq(categories.name, name),
+				columns: { name: true },
+			})
+			.prepare("get_duplicate_category")
+			.execute();
+
 		if (duplicate_category) {
 			return ctx.json(
 				{
@@ -169,11 +189,11 @@ categories_routes.openapi(update_category, async (ctx) => {
 
 	const data = await db
 		.update(categories)
-		.set({
-			name,
-			description,
-		})
-		.where(eq(categories.id, id));
+		.set({ name, description })
+		.where(eq(categories.id, id))
+		.prepare("update_category")
+		.execute();
+
 	if (data.rowCount === 0) {
 		return ctx.json(
 			{
@@ -201,10 +221,13 @@ categories_routes.openapi(delete_category, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const existing_category = await db.query.categories.findFirst({
-		where: eq(categories.id, id),
-		columns: { id: true },
-	});
+	const existing_category = await db.query.categories
+		.findFirst({
+			where: eq(categories.id, id),
+			columns: { id: true },
+		})
+		.prepare("get_existing_category")
+		.execute();
 
 	if (!existing_category) {
 		return ctx.json(
@@ -219,7 +242,12 @@ categories_routes.openapi(delete_category, async (ctx) => {
 		);
 	}
 
-	const data = await db.delete(categories).where(eq(categories.id, id));
+	const data = await db
+		.delete(categories)
+		.where(eq(categories.id, id))
+		.prepare("delete_category")
+		.execute();
+
 	if (data.rowCount === 0) {
 		return ctx.json(
 			{
