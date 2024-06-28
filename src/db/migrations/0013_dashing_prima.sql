@@ -1,0 +1,1 @@
+ALTER TABLE "villages" ALTER COLUMN "name" SET DATA TYPE varchar(32);

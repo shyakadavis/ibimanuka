@@ -14,6 +14,18 @@ export const get_riddles_request_schema = z.object({
 			example: "rdl_FZbZjD3JJ5VQ",
 		}),
 
+	fields: z
+		.string()
+		.optional()
+		.openapi({
+			param: {
+				name: "fields",
+				in: "query",
+				description: "The fields to return",
+			},
+			example: "question,answer",
+		}),
+
 	limit: z
 		.string()
 		.transform(Number)
@@ -38,18 +50,6 @@ export const get_riddles_request_schema = z.object({
 				description: "The number of riddles to skip",
 			},
 			example: "0",
-		}),
-
-	fields: z
-		.string()
-		.optional()
-		.openapi({
-			param: {
-				name: "fields",
-				in: "query",
-				description: "The fields to return",
-			},
-			example: "question,answer",
 		}),
 });
 

@@ -19,12 +19,12 @@ export const districts = pgTable(
 	{
 		id: varchar("id", { length: 16 }).primaryKey().notNull(),
 		name: varchar("name", { length: 16 }).notNull().unique(),
-		description: varchar("description", { length: 256 }).notNull(),
+		description: varchar("description", { length: 256 }),
 		province_id: varchar("province_id", { length: 16 })
 			.notNull()
 			.references(() => provinces.id, { onDelete: "cascade" }),
-		latitude: doublePrecision("latitude").notNull(),
-		longitude: doublePrecision("longitude").notNull(),
+		latitude: doublePrecision("latitude"),
+		longitude: doublePrecision("longitude"),
 		created_at: timestamp("created_at").notNull().defaultNow(),
 		updated_at: timestamp("updated_at").notNull().defaultNow(),
 	},

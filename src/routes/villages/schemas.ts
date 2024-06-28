@@ -14,6 +14,18 @@ export const get_villages_request_schema = z.object({
 			example: "vil_DEjnvJqDnPuP",
 		}),
 
+	fields: z
+		.string()
+		.optional()
+		.openapi({
+			param: {
+				name: "fields",
+				in: "query",
+				description: "The fields to return",
+			},
+			example: "name,longitude,latitude",
+		}),
+
 	limit: z
 		.string()
 		.transform(Number)
@@ -38,18 +50,6 @@ export const get_villages_request_schema = z.object({
 				description: "The number of villages to skip",
 			},
 			example: "0",
-		}),
-
-	fields: z
-		.string()
-		.optional()
-		.openapi({
-			param: {
-				name: "fields",
-				in: "query",
-				description: "The fields to return",
-			},
-			example: "name,longitude,latitude",
 		}),
 });
 
