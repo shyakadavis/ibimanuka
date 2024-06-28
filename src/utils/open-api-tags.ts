@@ -40,7 +40,7 @@ export const open_api_tags: Tag[] = [
 	{
 		name: "Villages",
 		description:
-			"Villages (`Imidugudu`) are the smallest administrative units in Rwanda. The country is divided into 14,837 villages, which are further divided into households.\n\n⚠️The size of the payload for the `GET /villages` endpoint is extremely large, so it is recommended to use alternative endpoints to get the details of a specific village.\nFor example, you could pass via the `GET /cells/{id}` endpoint to get the details of a specific cell, which will include the villages within that cell. Alternatively, you could use the `GET /villages/{id}` endpoint to get the details of a specific village.",
+			"Villages (`Imidugudu`) are the smallest administrative units in Rwanda. The country is divided into 14,837 villages, which are further divided into households.\n\n⚠️The size of the payload for the `GET /villages` endpoint is quite large, so it is recommended to use alternative endpoints to get the details of a specific village.\nFor example, you could pass via the `GET /cells/{id}` endpoint to get the details of a specific cell, which will include the villages within that cell. Alternatively, you could use the `GET /villages/{id}` endpoint to get the details of a specific village.",
 	},
 	{
 		name: "Riddles",
