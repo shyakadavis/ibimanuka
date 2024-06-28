@@ -17,8 +17,8 @@ export const villages = pgTable(
 	"villages",
 	{
 		id: varchar("id", { length: 16 }).primaryKey().notNull(),
-		name: varchar("name", { length: 16 }).notNull().unique(),
-		description: varchar("description", { length: 256 }).notNull(),
+		name: varchar("name", { length: 32 }).notNull(),
+		description: varchar("description", { length: 256 }),
 		cell_id: varchar("cell_id", { length: 16 })
 			.notNull()
 			.references(() => cells.id, { onDelete: "cascade" }),

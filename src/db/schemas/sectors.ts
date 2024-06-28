@@ -18,8 +18,8 @@ export const sectors = pgTable(
 	"sectors",
 	{
 		id: varchar("id", { length: 16 }).primaryKey().notNull(),
-		name: varchar("name", { length: 16 }).notNull().unique(),
-		description: varchar("description", { length: 256 }).notNull(),
+		name: varchar("name", { length: 16 }).notNull(),
+		description: varchar("description", { length: 256 }),
 		district_id: varchar("district_id", { length: 16 })
 			.notNull()
 			.references(() => districts.id, { onDelete: "cascade" }),

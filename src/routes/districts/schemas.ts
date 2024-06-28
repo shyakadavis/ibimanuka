@@ -14,6 +14,18 @@ export const get_districts_request_schema = z.object({
 			example: "dct_DEjnvJqDnPuP",
 		}),
 
+	fields: z
+		.string()
+		.optional()
+		.openapi({
+			param: {
+				name: "fields",
+				in: "query",
+				description: "The fields to return",
+			},
+			example: "name,longitude,latitude",
+		}),
+
 	limit: z
 		.string()
 		.transform(Number)
@@ -40,18 +52,6 @@ export const get_districts_request_schema = z.object({
 			example: "0",
 		}),
 
-	fields: z
-		.string()
-		.optional()
-		.openapi({
-			param: {
-				name: "fields",
-				in: "query",
-				description: "The fields to return",
-			},
-			example: "name,longitude,latitude",
-		}),
-
 	sectors: z
 		.string()
 		.transform(Boolean)
@@ -65,6 +65,18 @@ export const get_districts_request_schema = z.object({
 			example: "true",
 		}),
 
+	sector_fields: z
+		.string()
+		.optional()
+		.openapi({
+			param: {
+				name: "sector_fields",
+				in: "query",
+				description: "The fields to return for sectors",
+			},
+			example: "name,longitude,latitude",
+		}),
+
 	sector_limit: z
 		.string()
 		.transform(Number)
@@ -76,18 +88,6 @@ export const get_districts_request_schema = z.object({
 				description: "The number of sectors to return",
 			},
 			example: "10",
-		}),
-
-	sector_fields: z
-		.string()
-		.optional()
-		.openapi({
-			param: {
-				name: "sector_fields",
-				in: "query",
-				description: "The fields to return for sectors",
-			},
-			example: "name,longitude,latitude",
 		}),
 });
 

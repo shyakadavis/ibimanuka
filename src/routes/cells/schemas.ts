@@ -14,6 +14,18 @@ export const get_cells_request_schema = z.object({
 			example: "cel_DEjnvJqDnPuP",
 		}),
 
+	fields: z
+		.string()
+		.optional()
+		.openapi({
+			param: {
+				name: "fields",
+				in: "query",
+				description: "The fields to return",
+			},
+			example: "name,longitude,latitude",
+		}),
+
 	limit: z
 		.string()
 		.transform(Number)
@@ -40,18 +52,6 @@ export const get_cells_request_schema = z.object({
 			example: "0",
 		}),
 
-	fields: z
-		.string()
-		.optional()
-		.openapi({
-			param: {
-				name: "fields",
-				in: "query",
-				description: "The fields to return",
-			},
-			example: "name,longitude,latitude",
-		}),
-
 	villages: z
 		.string()
 		.transform(Boolean)
@@ -65,6 +65,18 @@ export const get_cells_request_schema = z.object({
 			example: "true",
 		}),
 
+	village_fields: z
+		.string()
+		.optional()
+		.openapi({
+			param: {
+				name: "village_fields",
+				in: "query",
+				description: "The fields to return for villages",
+			},
+			example: "name,longitude,latitude",
+		}),
+
 	village_limit: z
 		.string()
 		.transform(Number)
@@ -76,18 +88,6 @@ export const get_cells_request_schema = z.object({
 				description: "The number of villages to return",
 			},
 			example: "10",
-		}),
-
-	village_fields: z
-		.string()
-		.optional()
-		.openapi({
-			param: {
-				name: "village_fields",
-				in: "query",
-				description: "The fields to return for villages",
-			},
-			example: "name,longitude,latitude",
 		}),
 });
 

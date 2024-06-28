@@ -14,6 +14,18 @@ export const get_provinces_request_schema = z.object({
 			example: "prv_DEjnvJqDnPuP",
 		}),
 
+	fields: z
+		.string()
+		.optional()
+		.openapi({
+			param: {
+				name: "fields",
+				in: "query",
+				description: "The fields to return",
+			},
+			example: "name,longitude,latitude",
+		}),
+
 	limit: z
 		.string()
 		.transform(Number)
@@ -40,18 +52,6 @@ export const get_provinces_request_schema = z.object({
 			example: "0",
 		}),
 
-	fields: z
-		.string()
-		.optional()
-		.openapi({
-			param: {
-				name: "fields",
-				in: "query",
-				description: "The fields to return",
-			},
-			example: "name,longitude,latitude",
-		}),
-
 	districts: z
 		.string()
 		.transform(Boolean)
@@ -65,6 +65,18 @@ export const get_provinces_request_schema = z.object({
 			example: "true",
 		}),
 
+	district_fields: z
+		.string()
+		.optional()
+		.openapi({
+			param: {
+				name: "district_fields",
+				in: "query",
+				description: "The fields to return for districts",
+			},
+			example: "name,longitude,latitude",
+		}),
+
 	district_limit: z
 		.string()
 		.transform(Number)
@@ -76,18 +88,6 @@ export const get_provinces_request_schema = z.object({
 				description: "The number of districts to return",
 			},
 			example: "10",
-		}),
-
-	district_fields: z
-		.string()
-		.optional()
-		.openapi({
-			param: {
-				name: "district_fields",
-				in: "query",
-				description: "The fields to return for districts",
-			},
-			example: "name,longitude,latitude",
 		}),
 });
 

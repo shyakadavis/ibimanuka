@@ -14,6 +14,18 @@ export const get_sectors_request_schema = z.object({
 			example: "sec_DEjnvJqDnPuP",
 		}),
 
+	fields: z
+		.string()
+		.optional()
+		.openapi({
+			param: {
+				name: "fields",
+				in: "query",
+				description: "The fields to return",
+			},
+			example: "name,longitude,latitude",
+		}),
+
 	limit: z
 		.string()
 		.transform(Number)
@@ -40,18 +52,6 @@ export const get_sectors_request_schema = z.object({
 			example: "0",
 		}),
 
-	fields: z
-		.string()
-		.optional()
-		.openapi({
-			param: {
-				name: "fields",
-				in: "query",
-				description: "The fields to return",
-			},
-			example: "name,longitude,latitude",
-		}),
-
 	cells: z
 		.string()
 		.transform(Boolean)
@@ -65,6 +65,18 @@ export const get_sectors_request_schema = z.object({
 			example: "true",
 		}),
 
+	cell_fields: z
+		.string()
+		.optional()
+		.openapi({
+			param: {
+				name: "cell_fields",
+				in: "query",
+				description: "The fields to return for cells",
+			},
+			example: "name,longitude,latitude",
+		}),
+
 	cell_limit: z
 		.string()
 		.transform(Number)
@@ -76,18 +88,6 @@ export const get_sectors_request_schema = z.object({
 				description: "The number of cells to return",
 			},
 			example: "10",
-		}),
-
-	cell_fields: z
-		.string()
-		.optional()
-		.openapi({
-			param: {
-				name: "cell_fields",
-				in: "query",
-				description: "The fields to return for cells",
-			},
-			example: "name,longitude,latitude",
 		}),
 });
 

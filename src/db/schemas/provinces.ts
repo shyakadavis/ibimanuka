@@ -18,7 +18,7 @@ export const provinces = pgTable(
 	{
 		id: varchar("id", { length: 16 }).primaryKey().notNull(),
 		name: varchar("name", { length: 16 }).notNull().unique(),
-		description: varchar("description", { length: 256 }).notNull(),
+		description: varchar("description", { length: 256 }),
 		latitude: doublePrecision("latitude").notNull(),
 		longitude: doublePrecision("longitude").notNull(),
 		created_at: timestamp("created_at").notNull().defaultNow(),
