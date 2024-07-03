@@ -1,0 +1,1 @@
+DROP INDEX IF EXISTS "districts_unique_name_index";
