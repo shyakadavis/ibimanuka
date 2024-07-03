@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX IF NOT EXISTS "districts_unique_name_index" ON "districts" USING btree ("name");
