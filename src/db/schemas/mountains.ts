@@ -1,11 +1,14 @@
+import { relations } from "drizzle-orm";
 import {
 	doublePrecision,
 	index,
 	pgTable,
+	text,
 	timestamp,
 	varchar,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod";
 import { villages } from "./villages";
 
 export const mountains = pgTable(
@@ -13,13 +16,15 @@ export const mountains = pgTable(
 	{
 		id: varchar("id", { length: 16 }).primaryKey().notNull(),
 		name: varchar("name", { length: 16 }).notNull().unique(),
-		description: varchar("description", { length: 256 }),
-		elevation: varchar("elevation", { length: 16 }).notNull(),
+		// TODO
+		// Think about using a field that accommodates more AST or the output of a WYSIWYG editor
+		description: text("description").notNull(),
+		elevation: doublePrecision("elevation").notNull(),
 		latitude: doublePrecision("latitude").notNull(),
 		longitude: doublePrecision("longitude").notNull(),
 		native_name: varchar("native_name", { length: 16 }),
 		aliases: varchar("hints", { length: 16 }).array(),
-		location: varchar("location", { length: 16 })
+		village_id: varchar("location", { length: 16 })
 			.notNull()
 			.references(() => villages.id, { onDelete: "no action" }),
 		parent_range: varchar("parent_range", { length: 16 }),
@@ -31,4 +36,13 @@ export const mountains = pgTable(
 	},
 );
 
-export const mountain_schema = createInsertSchema(mountains);
+export const mountain_schema = createInsertSchema(mountains, {
+	aliases: z.array(z.string().max(16)),
+});
+
+export const mountain_relations = relations(mountains, ({ one }) => ({
+	location: one(villages, {
+		fields: [mountains.village_id],
+		references: [villages.id],
+	}),
+}));

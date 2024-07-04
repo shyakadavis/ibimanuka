@@ -8,6 +8,7 @@ const prefixes = {
 	category: "cat",
 	cell: "cel",
 	district: "dct",
+	mountain: "mtn",
 	province: "prv",
 	riddle: "rdl",
 	sector: "sec",
