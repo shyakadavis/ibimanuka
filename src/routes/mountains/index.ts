@@ -26,6 +26,8 @@ mountains_routes.openapi(get_all_mountains, async (ctx) => {
 			columns: fields
 				? parse_fields_to_columns(mountain_schema, fields)
 				: undefined,
+			// TODO:
+			// This looks hideous, we should consider flattening this schema
 			with: location
 				? {
 						location: {
@@ -78,6 +80,8 @@ mountains_routes.openapi(get_single_mountain, async (ctx) => {
 		columns: fields
 			? parse_fields_to_columns(mountain_schema, fields)
 			: undefined,
+		// TODO
+		// This looks hideous, we should consider flattening this schema
 		with: location
 			? {
 					location: {

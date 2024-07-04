@@ -28,6 +28,8 @@ export const get_all_mountains = createRoute({
 				"application/json": {
 					schema: success_with_data_schema(
 						mountain_schema
+							// TODO
+							// This looks like a lot of nesting, we should consider flattening this schema
 							.extend({
 								location: z
 									.object({
@@ -83,30 +85,34 @@ export const get_single_mountain = createRoute({
 			content: {
 				"application/json": {
 					schema: success_with_data_schema(
-						mountain_schema.openapi("Mountain").extend({
-							location: z
-								.object({
-									id: z.string(),
-									name: z.string(),
-									cell: z.object({
+						mountain_schema
+							.openapi("Mountain")
+							// TODO
+							// This looks like a lot of nesting, we should consider flattening this schema
+							.extend({
+								location: z
+									.object({
 										id: z.string(),
 										name: z.string(),
-										sector: z.object({
+										cell: z.object({
 											id: z.string(),
 											name: z.string(),
-											district: z.object({
+											sector: z.object({
 												id: z.string(),
 												name: z.string(),
-												province: z.object({
+												district: z.object({
 													id: z.string(),
 													name: z.string(),
+													province: z.object({
+														id: z.string(),
+														name: z.string(),
+													}),
 												}),
 											}),
 										}),
-									}),
-								})
-								.optional(),
-						}),
+									})
+									.optional(),
+							}),
 					),
 				},
 			},
