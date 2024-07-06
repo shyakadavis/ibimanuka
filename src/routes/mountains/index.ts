@@ -11,6 +11,7 @@ import {
 	get_single_mountain,
 	update_mountain,
 } from "./routes";
+import { flatten_location } from "./utils";
 
 export const mountains_routes = new OpenAPIHono<Env>();
 
@@ -26,8 +27,6 @@ mountains_routes.openapi(get_all_mountains, async (ctx) => {
 			columns: fields
 				? parse_fields_to_columns(mountain_schema, fields)
 				: undefined,
-			// TODO:
-			// This looks hideous, we should consider flattening this schema
 			with: location
 				? {
 						location: {
@@ -63,7 +62,14 @@ mountains_routes.openapi(get_all_mountains, async (ctx) => {
 		{
 			success: true,
 			message: `Returned ${data.length} mountains`,
-			data,
+			data: data.map((mountain) => ({
+				...mountain,
+				// @ts-expect-error `location` isn't being inferred as a possible return value from the query
+				location: mountain.location
+					? // @ts-expect-error `location` isn't being inferred as a possible return value from the query
+						flatten_location(mountain.location)
+					: undefined,
+			})),
 		},
 		200,
 	);
@@ -80,8 +86,6 @@ mountains_routes.openapi(get_single_mountain, async (ctx) => {
 		columns: fields
 			? parse_fields_to_columns(mountain_schema, fields)
 			: undefined,
-		// TODO
-		// This looks hideous, we should consider flattening this schema
 		with: location
 			? {
 					location: {
@@ -128,7 +132,11 @@ mountains_routes.openapi(get_single_mountain, async (ctx) => {
 		{
 			success: true,
 			message: `Returned mountain with id '${id}'`,
-			data,
+			data: {
+				...data,
+				// @ts-expect-error `location` isn't being inferred as a possible return value from the query
+				location: data.location ? flatten_location(data.location) : undefined,
+			},
 		},
 		200,
 	);

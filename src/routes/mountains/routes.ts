@@ -13,6 +13,31 @@ import {
 	update_mountain_param_schema,
 } from "./schemas";
 
+const flat_location_schema = z
+	.object({
+		village: z.object({
+			id: z.string(),
+			name: z.string(),
+		}),
+		cell: z.object({
+			id: z.string(),
+			name: z.string(),
+		}),
+		sector: z.object({
+			id: z.string(),
+			name: z.string(),
+		}),
+		district: z.object({
+			id: z.string(),
+			name: z.string(),
+		}),
+		province: z.object({
+			id: z.string(),
+			name: z.string(),
+		}),
+	})
+	.optional();
+
 export const get_all_mountains = createRoute({
 	method: "get",
 	path: "/",
@@ -27,34 +52,7 @@ export const get_all_mountains = createRoute({
 			content: {
 				"application/json": {
 					schema: success_with_data_schema(
-						mountain_schema
-							// TODO
-							// This looks like a lot of nesting, we should consider flattening this schema
-							.extend({
-								location: z
-									.object({
-										id: z.string(),
-										name: z.string(),
-										cell: z.object({
-											id: z.string(),
-											name: z.string(),
-											sector: z.object({
-												id: z.string(),
-												name: z.string(),
-												district: z.object({
-													id: z.string(),
-													name: z.string(),
-													province: z.object({
-														id: z.string(),
-														name: z.string(),
-													}),
-												}),
-											}),
-										}),
-									})
-									.optional(),
-							})
-							.array(),
+						mountain_schema.extend({ location: flat_location_schema }).array(),
 					),
 				},
 			},
@@ -87,32 +85,7 @@ export const get_single_mountain = createRoute({
 					schema: success_with_data_schema(
 						mountain_schema
 							.openapi("Mountain")
-							// TODO
-							// This looks like a lot of nesting, we should consider flattening this schema
-							.extend({
-								location: z
-									.object({
-										id: z.string(),
-										name: z.string(),
-										cell: z.object({
-											id: z.string(),
-											name: z.string(),
-											sector: z.object({
-												id: z.string(),
-												name: z.string(),
-												district: z.object({
-													id: z.string(),
-													name: z.string(),
-													province: z.object({
-														id: z.string(),
-														name: z.string(),
-													}),
-												}),
-											}),
-										}),
-									})
-									.optional(),
-							}),
+							.extend({ location: flat_location_schema }),
 					),
 				},
 			},
