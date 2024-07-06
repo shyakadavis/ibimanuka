@@ -13,28 +13,18 @@ import {
 	update_mountain_param_schema,
 } from "./schemas";
 
+const location_entry_schema = z.object({
+	id: z.string(),
+	name: z.string(),
+});
+
 const flat_location_schema = z
 	.object({
-		village: z.object({
-			id: z.string(),
-			name: z.string(),
-		}),
-		cell: z.object({
-			id: z.string(),
-			name: z.string(),
-		}),
-		sector: z.object({
-			id: z.string(),
-			name: z.string(),
-		}),
-		district: z.object({
-			id: z.string(),
-			name: z.string(),
-		}),
-		province: z.object({
-			id: z.string(),
-			name: z.string(),
-		}),
+		village: location_entry_schema,
+		cell: location_entry_schema,
+		sector: location_entry_schema,
+		district: location_entry_schema,
+		province: location_entry_schema,
 	})
 	.optional();
 
