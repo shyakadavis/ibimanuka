@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+  # TODO: Remove this after confirming that the deploy works
+  pull_request:
 
 jobs:
   deploy:
@@ -16,3 +18,4 @@ jobs:
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          command: deploy --minify
