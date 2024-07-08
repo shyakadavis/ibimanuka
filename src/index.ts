@@ -19,7 +19,14 @@ app.use((ctx, next) =>
 		keyGenerator: (c) => c.req.header("cf-connecting-ip") ?? "", // Method to generate custom identifiers for clients.,
 	})(ctx, next),
 );
-app.get("/", apiReference({ theme: "deepSpace", spec: { url: "/docs" } }));
+app.get(
+	"/",
+	apiReference({
+		pageTitle: "🌊 IBIMANUKA - API",
+		theme: "deepSpace",
+		spec: { url: "/docs" },
+	}),
+);
 app.doc("/docs", {
 	openapi: "3.0.0",
 	info: {

@@ -16,25 +16,25 @@
 		"db:studio": "drizzle-kit studio"
 	},
 	"dependencies": {
-		"@hono-rate-limiter/cloudflare": "^0.1.1",
-		"@hono/zod-openapi": "^0.14.5",
+		"@hono-rate-limiter/cloudflare": "^0.1.2",
+		"@hono/zod-openapi": "^0.14.7",
 		"@lucia-auth/adapter-drizzle": "^1.0.7",
-		"@neondatabase/serverless": "^0.9.3",
-		"@scalar/hono-api-reference": "^0.5.72",
+		"@neondatabase/serverless": "^0.9.4",
+		"@scalar/hono-api-reference": "^0.5.92",
 		"arctic": "^1.9.1",
 		"drizzle-orm": "^0.31.2",
 		"esm-env": "^1.0.0",
-		"hono": "^4.4.5",
+		"hono": "^4.4.11",
 		"lucia": "^3.2.0",
 		"nanoid": "^5.0.7"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.8.1",
-		"@cloudflare/workers-types": "^4.20240529.0",
+		"@cloudflare/workers-types": "^4.20240620.0",
 		"dotenv": "^16.4.5",
-		"drizzle-kit": "^0.22.7",
+		"drizzle-kit": "^0.22.8",
 		"drizzle-zod": "^0.5.1",
-		"wrangler": "^3.57.2",
+		"wrangler": "^3.63.0",
 		"zod": "^3.23.8"
 	}
 }

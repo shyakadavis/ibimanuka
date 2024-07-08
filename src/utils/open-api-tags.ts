@@ -1,21 +1,27 @@
 type Tag = {
 	name:
-		| "Auth"
+		| "Mountains"
 		| "Provinces"
 		| "Districts"
 		| "Sectors"
 		| "Cells"
 		| "Villages"
 		| "Riddles"
-		| "Categories";
+		| "Categories"
+		| "Auth";
 	description: string;
 };
 
 export const open_api_tags: Tag[] = [
 	{
-		name: "Auth",
+		name: "Mountains",
 		description:
-			"These are the currently available authentication endpoints. The API uses Cookies for authentication.\n\n⚠️There is an existing issue with the authentication aspect of API, where the relevant endpoints might not work as expected. This is a known issue and is being worked on.",
+			"Mountains (`Ibirunga`) are the highest points in Rwanda. The country is known as the land of a thousand hills, and the mountains are a key part of the landscape. The highest mountain in Rwanda is Mount Karisimbi, which is part of the Virunga Mountains.",
+	},
+	{
+		name: "Riddles",
+		description:
+			"Riddles (`Ibisakuzo`) are word games, questions and answers that are fun for young and old alike, and involve skill. As the history of Rwandan literature shows, riddles also had expert composers, who were always digging day and night, to further improve and enrich the game.",
 	},
 	{
 		name: "Provinces",
@@ -43,13 +49,13 @@ export const open_api_tags: Tag[] = [
 			"Villages (`Imidugudu`) are the smallest administrative units in Rwanda. The country is divided into 14,837 villages, which are further divided into households.\n\n⚠️The size of the payload for the `GET /villages` endpoint is quite large, so it is recommended to use alternative endpoints to get the details of a specific village.\nFor example, you could pass via the `GET /cells/{id}` endpoint to get the details of a specific cell, which will include the villages within that cell. Alternatively, you could use the `GET /villages/{id}` endpoint to get the details of a specific village.",
 	},
 	{
-		name: "Riddles",
-		description:
-			"Riddles (`Ibisakuzo`) are word games, questions and answers that are fun for young and old alike, and involve skill. As the history of Rwandan literature shows, riddles also had expert composers, who were always digging day and night, to further improve and enrich the game.",
-	},
-	{
 		name: "Categories",
 		description:
 			"These are general categories, spreading across different topics and subjects on the platform.",
+	},
+	{
+		name: "Auth",
+		description:
+			"These are the currently available authentication endpoints. The API uses Cookies for authentication.\n\n⚠️There is an existing issue with the authentication aspect of API, where the relevant endpoints might not work as expected. This is a known issue and is being worked on.",
 	},
 ];

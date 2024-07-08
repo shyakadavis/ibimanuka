@@ -1,0 +1,1 @@
+ALTER TABLE "mountains" ALTER COLUMN "description" SET DATA TYPE text;

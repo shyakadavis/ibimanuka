@@ -1,6 +1,7 @@
 export * from "./categories";
 export * from "./cells";
 export * from "./districts";
+export * from "./mountains";
 export * from "./provinces";
 export * from "./riddles";
 export * from "./sectors";
