@@ -1,0 +1,1 @@
+ALTER TABLE "riddles" ALTER COLUMN "hints" SET DATA TYPE varchar(16)[];

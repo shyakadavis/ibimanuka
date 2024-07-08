@@ -1,0 +1,1 @@
+ALTER TABLE "riddles" ALTER COLUMN "question" SET DATA TYPE varchar(128);
