@@ -155,6 +155,41 @@
 			"when": 1720396533590,
 			"tag": "0021_rainy_living_mummy",
 			"breakpoints": true
+		},
+		{
+			"idx": 22,
+			"version": "7",
+			"when": 1720449563951,
+			"tag": "0022_legal_the_santerians",
+			"breakpoints": true
+		},
+		{
+			"idx": 23,
+			"version": "7",
+			"when": 1720453616873,
+			"tag": "0023_equal_betty_brant",
+			"breakpoints": true
+		},
+		{
+			"idx": 24,
+			"version": "7",
+			"when": 1720453686092,
+			"tag": "0024_black_white_queen",
+			"breakpoints": true
+		},
+		{
+			"idx": 25,
+			"version": "7",
+			"when": 1720453849555,
+			"tag": "0025_wise_ironclad",
+			"breakpoints": true
+		},
+		{
+			"idx": 26,
+			"version": "7",
+			"when": 1720454000438,
+			"tag": "0026_gorgeous_speed",
+			"breakpoints": true
 		}
 	]
 }
