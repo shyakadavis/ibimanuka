@@ -147,25 +147,27 @@ mountains_routes.openapi(create_mountain, async (ctx) => {
 
 	const db = create_drizzle_client(ctx.env.DATABASE_URL);
 
-	const valid_village = await db.query.villages
-		.findFirst({
-			where: eq(villages.id, payload.village_id),
-			columns: { id: true },
-		})
-		.prepare("create_mountain")
-		.execute();
+	if (payload.village_id) {
+		const valid_village = await db.query.villages
+			.findFirst({
+				where: eq(villages.id, payload.village_id),
+				columns: { id: true },
+			})
+			.prepare("get_valid_village")
+			.execute();
 
-	if (!valid_village) {
-		return ctx.json(
-			{
-				success: false,
-				error: {
-					status: 404,
-					message: `Province '${payload.village_id}' not found`,
+		if (!valid_village) {
+			return ctx.json(
+				{
+					success: false,
+					error: {
+						status: 404,
+						message: `Province '${payload.village_id}' not found`,
+					},
 				},
-			},
-			404,
-		);
+				404,
+			);
+		}
 	}
 
 	const data = await db
@@ -229,25 +231,27 @@ mountains_routes.openapi(update_mountain, async (ctx) => {
 		);
 	}
 
-	const valid_village = await db.query.villages
-		.findFirst({
-			where: eq(villages.id, payload.village_id),
-			columns: { id: true },
-		})
-		.prepare("get_valid_village")
-		.execute();
+	if (payload.village_id) {
+		const valid_village = await db.query.villages
+			.findFirst({
+				where: eq(villages.id, payload.village_id),
+				columns: { id: true },
+			})
+			.prepare("get_valid_village")
+			.execute();
 
-	if (!valid_village) {
-		return ctx.json(
-			{
-				success: false,
-				error: {
-					status: 404,
-					message: `Province '${payload.village_id}' not found`,
+		if (!valid_village) {
+			return ctx.json(
+				{
+					success: false,
+					error: {
+						status: 404,
+						message: `Province '${payload.village_id}' not found`,
+					},
 				},
-			},
-			404,
-		);
+				404,
+			);
+		}
 	}
 
 	const data = await db

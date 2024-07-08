@@ -26,9 +26,10 @@ export const mountains = pgTable(
 		longitude: doublePrecision("longitude").notNull(),
 		native_name: varchar("native_name", { length: 16 }),
 		aliases: varchar("hints", { length: 16 }).array(),
-		village_id: varchar("location", { length: 16 })
-			.notNull()
-			.references(() => villages.id, { onDelete: "no action" }),
+		village_id: varchar("location", { length: 16 }).references(
+			() => villages.id,
+			{ onDelete: "no action" },
+		),
 		parent_range: varchar("parent_range", { length: 16 }),
 		created_at: timestamp("created_at").notNull().defaultNow(),
 		updated_at: timestamp("updated_at").notNull().defaultNow(),
