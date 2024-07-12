@@ -10,25 +10,14 @@ jobs:
   Check:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install bun
-        uses: oven-sh/setup-bun@v1
-
-      - name: Setup bun cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.bun/install/cache
-          key: ${{ runner.os }}-${{ matrix.bun }}-bun-${{ hashFiles('**/bun.lockb') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.bun }}-bun-
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
         run: bun install
 
-      - name: Check
+      - name: Lint/Format
         run: bun check
 
-      - name: Check types
+      - name: Check TS Types
         run: bun check:types
