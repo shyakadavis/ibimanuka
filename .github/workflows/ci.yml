@@ -16,7 +16,7 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: Lint/Format
+      - name: Format/Lint
         run: bun check
 
       - name: Check TS Types
